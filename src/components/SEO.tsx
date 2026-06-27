@@ -34,6 +34,10 @@ export const SEO = ({
 }: SEOProps) => {
   const siteName = import.meta.env.VITE_COMPANY_NAME || 'RPLB Électricité'
   const siteUrl = import.meta.env.VITE_SITE_URL || 'https://www.rplb-electricite.fr'
+  // Logo/visuel de marque réellement hébergé (utilisé aussi par le Header) — évite les
+  // références cassées vers /logo.png et /og-image.jpg qui renvoient un 404.
+  const brandImage = 'https://hgcpddzpqzfxrvfipsii.supabase.co/storage/v1/object/public/rplb-media/logo-rplb.png'
+  const businessPhone = import.meta.env.VITE_CONTACT_PHONE || '07 86 17 22 82'
   const defaultTitle = `${siteName} - Électricien Longueil-Sainte-Marie (60)`
   const defaultDescription = 'Électricien professionnel à Longueil-Sainte-Marie. Installation, dépannage, rénovation électrique. Intervention rapide dans l\'Oise. Devis gratuit.'
 
@@ -72,7 +76,7 @@ export const SEO = ({
     : (typeof window !== 'undefined' 
         ? normalizeUrl(window.location.href) 
         : siteUrl)
-  const pageImage = image || `${siteUrl}/og-image.jpg`
+  const pageImage = image || brandImage
 
   useEffect(() => {
     document.title = pageTitle
@@ -174,7 +178,7 @@ export const SEO = ({
     '@id': `${siteUrl}#organization`,
     name: siteName,
     image: pageImage,
-    telephone: import.meta.env.VITE_CONTACT_PHONE || '',
+    telephone: businessPhone,
     email: 'rplb.electricite@gmail.com',
     url: siteUrl,
     address: {
@@ -252,7 +256,7 @@ export const SEO = ({
       name: siteName,
       logo: {
         '@type': 'ImageObject',
-        url: `${siteUrl}/logo.png`
+        url: brandImage
       }
     }
   } : null
