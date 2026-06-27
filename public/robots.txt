@@ -1,0 +1,29 @@
+# robots.txt pour RPLB Électricité
+# https://www.rplb-electricite.fr
+
+# Autoriser tous les robots
+User-agent: *
+Allow: /
+
+# Désactiver l'indexation des pages d'administration et de développement
+Disallow: /admin/
+Disallow: /api/
+Disallow: /*.json$
+Disallow: /*?*
+
+# Crawl-delay pour éviter la surcharge
+Crawl-delay: 1
+
+# Sitemaps
+Sitemap: https://www.rplb-electricite.fr/sitemap.xml
+
+# Spécifique pour Google
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 0
+
+# Spécifique pour Bing
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1
+
