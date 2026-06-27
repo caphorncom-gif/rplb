@@ -6,6 +6,11 @@
       "has": [{ "type": "host", "value": "rplb-electricite.fr" }],
       "destination": "https://www.rplb-electricite.fr/$1",
       "permanent": true
+    },
+    {
+      "source": "/electricien/ner",
+      "destination": "/electricien/nery",
+      "permanent": true
     }
   ],
   "rewrites": [
