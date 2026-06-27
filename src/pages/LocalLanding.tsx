@@ -369,7 +369,7 @@ export const LocalLanding = () => {
             name: isCompiegne 
               ? 'RPLB Électricité - Électricien Compiègne (60200)'
               : `RPLB Électricité - Électricien à ${cityName}`,
-            image: 'https://www.rplb-electricite.fr/logo.png',
+            image: 'https://hgcpddzpqzfxrvfipsii.supabase.co/storage/v1/object/public/rplb-media/logo-rplb.png',
             telephone: '07 86 17 22 82',
             email: 'rplb.electricite@gmail.com',
             url: `https://www.rplb-electricite.fr/electricien/${cityData.slug}`,
