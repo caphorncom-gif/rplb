@@ -198,8 +198,8 @@ export const LOCAL_CITIES: Record<string, CityData> = {
     description: 'Commune de l\'Oise, Vieux-Moulin bénéficie de nos interventions électriques rapides.',
     priority: 0.7
   },
-  'ner': {
-    slug: 'ner',
+  'nery': {
+    slug: 'nery',
     name: 'Néry',
     postalCode: '60320',
     department: 'Oise',
@@ -309,8 +309,11 @@ export const LOCAL_CITIES: Record<string, CityData> = {
     department: 'Oise',
     lat: 49.3000,
     lng: 2.6000,
-    description: 'Située sur les bords de l\'Oise, Pont-Sainte-Maxence fait partie de notre zone d\'intervention privilégiée.',
-    priority: 0.9
+    description: 'Située sur les bords de l\'Oise entre Creil et Compiègne, Pont-Sainte-Maxence (60700) compte un centre-ville traversé par la rivière et des quartiers pavillonnaires en développement sur les coteaux. Les habitations anciennes y nécessitent fréquemment une mise aux normes NF C 15-100 et un remplacement de tableau électrique, tandis que les constructions récentes appellent installations neuves, domotique et bornes de recharge. RPLB Électricité intervient à Pont-Sainte-Maxence pour le dépannage électrique urgent, l\'installation, la rénovation complète et la mise en sécurité de votre logement ou local. Artisan certifié Qualifelec et RGE, devis gratuit.',
+    priority: 0.9,
+    meta_title: 'Électricien à Pont-Sainte-Maxence (60) | Dépannage & Rénovation | RPLB',
+    meta_description:
+      'RPLB, électricien à Pont-Sainte-Maxence (60700). Dépannage, installation, rénovation, mise aux normes, tableau électrique. Devis gratuit — ☎ 07 86 17 22 82',
   },
   'saint-martin-longueau': {
     slug: 'saint-martin-longueau',
@@ -351,8 +354,11 @@ export const LOCAL_CITIES: Record<string, CityData> = {
     department: 'Oise',
     lat: 49.2333,
     lng: 2.9000,
-    description: 'Ville médiévale du Valois, Crépy-en-Valois bénéficie de notre expertise en électricité résidentielle et tertiaire.',
-    priority: 0.9
+    description: 'Ancienne capitale du Valois, Crépy-en-Valois (60800) conjugue un centre historique riche en bâtisses anciennes et des quartiers résidentiels en expansion vers la gare et les zones pavillonnaires. Les logements anciens du centre demandent souvent une rénovation électrique complète et une mise aux normes NF C 15-100, avec remplacement de tableaux vétustes ; les maisons récentes privilégient installations neuves, domotique et bornes de recharge. RPLB Électricité intervient à Crépy-en-Valois pour le dépannage électrique, l\'installation, la rénovation et la mise en sécurité, chez les particuliers comme dans le tertiaire. Artisan certifié Qualifelec et RGE, devis gratuit.',
+    priority: 0.9,
+    meta_title: 'Électricien à Crépy-en-Valois (60) | Installation & Dépannage | RPLB',
+    meta_description:
+      'RPLB, électricien à Crépy-en-Valois (60800). Dépannage, installation, rénovation, mise aux normes NF C 15-100. Artisan certifié — Devis gratuit ☎ 07 86 17 22 82',
   },
   'vaumoise': {
     slug: 'vaumoise',
@@ -393,7 +399,7 @@ export const LOCAL_CITIES: Record<string, CityData> = {
     department: 'Oise',
     lat: 49.2000,
     lng: 2.5833,
-    description: 'Ville historique et touristique, Senlis est desservie par nos électriciens qualifiés pour tous vos besoins.',
+    description: 'Cité médiévale prisée pour son patrimoine, Senlis (60300) se distingue par ses ruelles pavées, ses maisons de caractère et un cœur historique classé. Ces bâtiments anciens exigent une rénovation électrique soignée et respectueuse du bâti, avec mise aux normes NF C 15-100 et remplacement de tableaux souvent vétustes ; les quartiers résidentiels plus récents demandent quant à eux des installations neuves, de la domotique et des bornes de recharge. RPLB Électricité intervient à Senlis pour le dépannage électrique, la rénovation, l\'installation et la mise en sécurité, chez les particuliers comme dans les locaux professionnels. Artisan certifié Qualifelec et RGE, devis gratuit.',
     priority: 0.9,
     meta_title: 'Électricien à Senlis (60) | SARL RPLB Électricité',
     meta_description:
@@ -448,7 +454,7 @@ export const LOCAL_CITIES: Record<string, CityData> = {
     department: 'Oise',
     lat: 49.5833,
     lng: 3.0000,
-    description: 'Ancienne capitale du Vermandois, Noyon fait partie de notre zone d\'intervention dans l\'Oise.',
+    description: 'Ancienne capitale du Vermandois dominée par sa cathédrale Notre-Dame, Noyon (60400) associe un centre historique aux bâtisses anciennes et des secteurs pavillonnaires plus récents en périphérie. Les logements anciens du cœur de ville demandent souvent une rénovation électrique complète et une mise aux normes NF C 15-100, tandis que les maisons récentes appellent installations neuves, domotique et bornes de recharge. RPLB Électricité intervient à Noyon pour le dépannage électrique rapide, le remplacement de tableau, la rénovation, l\'installation de prises et points lumineux, ainsi que la mise en sécurité des installations. Artisan certifié Qualifelec et RGE, devis gratuit.',
     priority: 0.9,
     meta_title: 'Électricien à Noyon (60) | Dépannage & Installation | RPLB',
     meta_description:
@@ -493,7 +499,7 @@ export const LOCAL_CITIES: Record<string, CityData> = {
     department: 'Oise',
     lat: 49.2667,
     lng: 2.4833,
-    description: 'Ville importante de l\'Oise, Creil est desservie par nos électriciens professionnels.',
+    description: 'Pôle urbain majeur du sud de l\'Oise, Creil (60100) mêle un centre-ville dense, des quartiers résidentiels comme le Plateau Rouher et de nombreux logements collectifs autour de la gare. Ce tissu varié appelle des interventions électriques précises : remise aux normes NF C 15-100 d\'appartements anciens, remplacement de tableaux électriques vétustes, sécurisation d\'installations en copropriété, mais aussi installations neuves et domotique dans les programmes récents. RPLB Électricité intervient à Creil pour le dépannage électrique urgent, l\'installation, la rénovation complète et la mise en sécurité de votre logement ou local professionnel. Devis gratuit et conseils par un artisan certifié Qualifelec et RGE.',
     priority: 0.8,
     meta_title: 'Électricien à Creil (60) | Installation & Dépannage | RPLB',
     meta_description:
