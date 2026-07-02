@@ -3,7 +3,7 @@ import { ServiceCard } from '../components/ServiceCard'
 import { SEO } from '../components/SEO'
 import { ContactCTA } from '../components/ContactCTA'
 import { supabase } from '../lib/supabase'
-import * as LucideIcons from 'lucide-react'
+import { getServiceIcon } from '../lib/serviceIcons'
 
 interface Service {
   id: string
@@ -45,10 +45,7 @@ export const Services = () => {
     fetchServices()
   }, [])
 
-  const getIcon = (iconName: string) => {
-    const IconComponent = (LucideIcons as any)[iconName]
-    return IconComponent || LucideIcons.Zap
-  }
+  const getIcon = getServiceIcon
 
   return (
     <>

@@ -9,7 +9,7 @@ import { OptimizedImage } from '../components/OptimizedImage'
 import { supabase } from '../lib/supabase'
 import { CheckCircle, MapPin, ArrowRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import * as LucideIcons from 'lucide-react'
+import { getServiceIcon } from '../lib/serviceIcons'
 
 interface Service {
   id: string
@@ -102,11 +102,6 @@ export const Home = () => {
     fetchData()
   }, [])
 
-  const getIcon = (iconName: string) => {
-    const IconComponent = (LucideIcons as any)[iconName]
-    return IconComponent || LucideIcons.Zap
-  }
-
   return (
     <>
       <SEO
@@ -145,7 +140,7 @@ export const Home = () => {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {services.map((service) => {
-                const Icon = getIcon(service.icon)
+                const Icon = getServiceIcon(service.icon)
                 return (
                   <ServiceCard
                     key={service.id}

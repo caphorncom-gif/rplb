@@ -5,7 +5,7 @@ import { ContactCTA } from '../components/ContactCTA'
 import { ServiceCard } from '../components/ServiceCard'
 import { supabase } from '../lib/supabase'
 import { MapPin, Phone, Clock, CheckCircle } from 'lucide-react'
-import * as LucideIcons from 'lucide-react'
+import { getServiceIcon } from '../lib/serviceIcons'
 import { getCityBySlug, getAllCities } from '../data/localCities'
 
 interface Service {
@@ -68,10 +68,7 @@ export const LocalLanding = () => {
     )
   }
 
-  const getIcon = (iconName: string) => {
-    const IconComponent = (LucideIcons as any)[iconName]
-    return IconComponent || LucideIcons.Zap
-  }
+  const getIcon = getServiceIcon
 
   const cityName = cityData.name
   // Optimisation spéciale pour Compiègne
