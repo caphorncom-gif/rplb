@@ -18,6 +18,14 @@ interface GoogleReviewsCarouselProps {
 
 const googleReviews: GoogleReview[] = [
   {
+    id: '0',
+    reviewerName: 'Martine',
+    rating: 5,
+    comment: 'Excellentes prestations ! Dépannage rapide et efficace. Tarif raisonnable. Électricien à recommander. Martine de Verberie',
+    date: 'il y a 6 mois',
+    visitDate: 'Visité en décembre 2025'
+  },
+  {
     id: '1',
     reviewerName: 'Severine Leclercq',
     rating: 5,
@@ -30,7 +38,7 @@ const googleReviews: GoogleReview[] = [
     reviewerName: 'Marie-Christelle Chagot',
     rating: 5,
     comment: 'Entreprise sérieuse et très réactive à laquelle je fais appel sans hésiter régulièrement depuis l\'achat de mon appartement en 2020.',
-    date: 'il y a 10 mois',
+    date: 'il y a un an',
     visitDate: 'Visité en novembre 2024'
   },
   {
@@ -38,7 +46,7 @@ const googleReviews: GoogleReview[] = [
     reviewerName: 'Pierre AUBERT',
     rating: 5,
     comment: 'Merci Romain et Ludovic pour votre réactivité et votre professionnalisme. Intervention de qualité. Vous pouvez y aller les yeux fermés.',
-    date: 'il y a un an',
+    date: 'il y a 2 ans',
     visitDate: 'Visité en janvier 2024'
   },
   {
@@ -46,8 +54,8 @@ const googleReviews: GoogleReview[] = [
     reviewerName: 'ANGELE POCTHIER',
     rating: 5,
     comment: 'Rénovation totale de l\'électricité. Travail très professionnel et donne de très bons conseils, nettoyage du chantier au fur et à mesure. Information chaque jour de l\'avancement des travaux. Rien à redire. Personnes très consciencieuses.',
-    date: 'il y a 2 ans',
-    visitDate: 'Visité en février 2024'
+    date: 'il y a 3 ans',
+    visitDate: 'Visité en juin 2023'
   },
   {
     id: '5',
