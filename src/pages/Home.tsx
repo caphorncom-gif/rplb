@@ -1,15 +1,13 @@
 import { useEffect, useState } from 'react'
 import { Hero } from '../components/Hero'
 import { ServiceCard } from '../components/ServiceCard'
-import { TestimonialCard } from '../components/TestimonialCard'
 import { TrustBadges } from '../components/TrustBadges'
-import { PartnersCarousel } from '../components/PartnersCarousel'
 import { GoogleReviewsCarousel } from '../components/GoogleReviewsCarousel'
 import { ContactCTA } from '../components/ContactCTA'
 import { SEO } from '../components/SEO'
 import { OptimizedImage } from '../components/OptimizedImage'
 import { supabase } from '../lib/supabase'
-import { Zap, CheckCircle, Clock } from 'lucide-react'
+import { CheckCircle, MapPin, ArrowRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import * as LucideIcons from 'lucide-react'
 
@@ -23,16 +21,6 @@ interface Service {
   image: string | null
 }
 
-interface Testimonial {
-  id: string
-  client_name: string
-  client_location: string | null
-  rating: number
-  comment: string
-  service_type: string | null
-  date: string | null
-}
-
 interface Article {
   id: string
   slug: string
@@ -42,9 +30,28 @@ interface Article {
   published_at: string | null
 }
 
+const interventionCities = [
+  { slug: 'longueil-sainte-marie', name: 'Longueil-Sainte-Marie' },
+  { slug: 'compiegne', name: 'Compiègne' },
+  { slug: 'verberie', name: 'Verberie' },
+  { slug: 'pont-sainte-maxence', name: 'Pont-Sainte-Maxence' },
+  { slug: 'crepy-en-valois', name: 'Crépy-en-Valois' },
+  { slug: 'senlis', name: 'Senlis' },
+  { slug: 'noyon', name: 'Noyon' },
+  { slug: 'montataire', name: 'Montataire' },
+]
+
+const brands = ['Schneider Electric', 'Legrand', 'Hager', 'Somfy', 'Siemens', 'ABB']
+
+const engagements = [
+  'Un devis gratuit et détaillé, sans surprise',
+  'Des installations conformes NF C 15-100, garanties 10 ans',
+  'Un chantier propre, nettoyé au fur et à mesure',
+  'Un point d\'avancement chaque jour sur les chantiers longs',
+]
+
 export const Home = () => {
   const [services, setServices] = useState<Service[]>([])
-  const [testimonials, setTestimonials] = useState<Testimonial[]>([])
   const [articles, setArticles] = useState<Article[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -70,21 +77,6 @@ export const Home = () => {
           console.error('[Home] Erreur chargement services:', servicesError)
         } else if (servicesData) {
           setServices(servicesData as Service[])
-        }
-
-        // Charger avis clients
-        const { data: testimonialsData, error: testimonialsError } = await supabase
-          .from('testimonials')
-          .select('*')
-          .eq('is_approved', true)
-          .eq('is_featured', true)
-          .order('created_at', { ascending: false })
-          .limit(3)
-
-        if (testimonialsError) {
-          console.error('[Home] Erreur chargement avis:', testimonialsError)
-        } else if (testimonialsData) {
-          setTestimonials(testimonialsData as Testimonial[])
         }
 
         // Charger articles de blog
@@ -125,31 +117,31 @@ export const Home = () => {
 
       <Hero />
 
-      {/* Photo professionnelle */}
-      <section className="py-12 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
-            <OptimizedImage
-              src="https://hgcpddzpqzfxrvfipsii.supabase.co/storage/v1/object/public/rplb-media/services/pagnier-bozo-photo-web.jpg"
-              alt="RPLB Électricité - Romain Pagnier et Ludovic Bozo, électriciens professionnels"
-              className="w-full h-auto rounded-lg shadow-lg"
-              loading="eager"
-            />
-          </div>
-        </div>
-      </section>
+      <TrustBadges />
 
       {/* Services */}
-      <section className="py-16 bg-white">
+      <section className="py-16 lg:py-24 bg-paper">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 text-gray-900">
-            Nos Services
-          </h2>
-          <p className="text-center text-lg text-gray-600 mb-12">
-            Services électriques pour particuliers et professionnels
-          </p>
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-12">
+            <div>
+              <p className="text-secondary-dark font-semibold uppercase tracking-widest text-sm mb-2">
+                Nos services
+              </p>
+              <h2 className="text-3xl md:text-4xl font-bold text-ink text-balance">
+                Du dépannage à la domotique,
+                <br className="hidden md:block" /> un seul interlocuteur
+              </h2>
+            </div>
+            <Link
+              to="/services"
+              className="inline-flex items-center gap-2 text-primary hover:text-secondary-dark font-semibold shrink-0 transition-colors"
+            >
+              Voir tous les services
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
           {loading ? (
-            <div className="text-center py-12">Chargement...</div>
+            <div className="text-center py-12 text-gray-500">Chargement…</div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {services.map((service) => {
@@ -169,136 +161,138 @@ export const Home = () => {
               })}
             </div>
           )}
-          <div className="text-center mt-12">
-            <Link
-              to="/services"
-              className="inline-flex items-center space-x-2 text-primary hover:text-primary-dark font-semibold text-lg"
-            >
-              <span>Voir tous les services</span>
-              <span>→</span>
-            </Link>
-          </div>
         </div>
       </section>
 
-      {/* Zone d'intervention */}
-      <section className="py-16 bg-gray-50">
+      {/* L'équipe & engagements */}
+      <section className="py-16 lg:py-24 bg-white">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-8 text-gray-900">
-            Zone d'Intervention
-          </h2>
-          <div className="max-w-2xl mx-auto text-center">
-            <p className="text-lg text-gray-700 mb-6">
-              Nous intervenons dans un rayon de 30km autour de Longueil-Sainte-Marie
-            </p>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-gray-600">
-              {['Longueil-Sainte-Marie', 'Compiègne', 'Verberie', 'Pont-Sainte-Maxence', 'Crépy-en-Valois', 'Senlis', 'Noyon', 'Montataire'].map((city) => (
-                <div key={city} className="bg-white p-3 rounded shadow-sm">
-                  {city}
-                </div>
-              ))}
+          <div className="grid lg:grid-cols-2 gap-12 items-center max-w-6xl mx-auto">
+            <div className="relative">
+              <div
+                className="absolute inset-0 -translate-x-4 translate-y-4 rounded-2xl bg-paper border border-ink/10"
+                aria-hidden="true"
+              />
+              <OptimizedImage
+                src="https://hgcpddzpqzfxrvfipsii.supabase.co/storage/v1/object/public/rplb-media/services/pagnier-bozo-photo-web.jpg"
+                alt="Romain Pagnier et Ludovic Bozo, électriciens RPLB Électricité"
+                className="relative w-full h-auto rounded-2xl shadow-card"
+              />
+            </div>
+            <div>
+              <p className="text-secondary-dark font-semibold uppercase tracking-widest text-sm mb-2">
+                Qui sommes-nous ?
+              </p>
+              <h2 className="text-3xl md:text-4xl font-bold text-ink mb-6 text-balance">
+                Deux artisans, plus de 25 ans de métier
+              </h2>
+              <p className="text-gray-600 leading-relaxed mb-8">
+                Romain Pagnier et Ludovic Bozo interviennent dans toute l'Oise pour vos travaux
+                d'électricité, du simple dépannage à la rénovation complète. Une entreprise à taille
+                humaine : ceux qui établissent le devis sont ceux qui font le chantier.
+              </p>
+              <ul className="space-y-4">
+                {engagements.map((engagement) => (
+                  <li key={engagement} className="flex items-start gap-3">
+                    <CheckCircle className="w-5 h-5 text-secondary-dark mt-0.5 shrink-0" />
+                    <span className="text-gray-700">{engagement}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
         </div>
       </section>
-
-      {/* Certifications */}
-      <TrustBadges />
-
-      {/* Partenaires */}
-      <PartnersCarousel />
 
       {/* Avis Google */}
       <GoogleReviewsCarousel />
 
-      {/* Avis clients */}
-      {testimonials.length > 0 && (
-        <section className="py-16 bg-white">
-          <div className="container mx-auto px-4">
-            <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">
-              Ce que disent nos clients
+      {/* Zone d'intervention */}
+      <section className="py-16 lg:py-24 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="max-w-3xl mx-auto text-center">
+            <p className="text-secondary-dark font-semibold uppercase tracking-widest text-sm mb-2">
+              Zone d'intervention
+            </p>
+            <h2 className="text-3xl md:text-4xl font-bold text-ink mb-4 text-balance">
+              À moins de 30 minutes de chez vous
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-              {testimonials.map((testimonial) => (
-                <TestimonialCard
-                  key={testimonial.id}
-                  clientName={testimonial.client_name}
-                  clientLocation={testimonial.client_location || undefined}
-                  rating={testimonial.rating}
-                  comment={testimonial.comment}
-                  serviceType={testimonial.service_type || undefined}
-                  date={testimonial.date || undefined}
-                />
+            <p className="text-lg text-gray-600 mb-10">
+              Basés à Longueil-Sainte-Marie, nous intervenons dans un rayon de 30 km : Compiègne,
+              Senlis, Pont-Sainte-Maxence, Crépy-en-Valois et toutes les communes alentour.
+            </p>
+            <div className="flex flex-wrap justify-center gap-3">
+              {interventionCities.map((city) => (
+                <Link
+                  key={city.slug}
+                  to={`/electricien/${city.slug}`}
+                  className="inline-flex items-center gap-2 bg-paper border border-ink/10 hover:border-secondary hover:bg-secondary/5 text-ink px-4 py-2.5 rounded-full font-medium transition-colors"
+                >
+                  <MapPin className="w-4 h-4 text-secondary-dark" />
+                  {city.name}
+                </Link>
               ))}
             </div>
           </div>
-        </section>
-      )}
+        </div>
+      </section>
 
-      {/* Pourquoi nous choisir */}
-      <section className="py-16 bg-white">
+      {/* Marques installées */}
+      <section className="py-10 bg-paper border-y border-ink/5">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">
-            Pourquoi choisir RPLB Électricité ?
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-            <div className="text-center">
-              <div className="bg-primary/10 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                <Zap className="w-8 h-8 text-primary" />
-              </div>
-              <h3 className="text-xl font-bold mb-2">Intervention Rapide</h3>
-              <p className="text-gray-600">
-                Disponibles du lundi au vendredi pour vos urgences électriques. Intervention rapide en semaine.
-              </p>
-            </div>
-            <div className="text-center">
-              <div className="bg-primary/10 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                <CheckCircle className="w-8 h-8 text-primary" />
-              </div>
-              <h3 className="text-xl font-bold mb-2">Professionnels Certifiés</h3>
-              <p className="text-gray-600">
-                Assurance décennale. Travaux conformes aux normes.
-              </p>
-            </div>
-            <div className="text-center">
-              <div className="bg-primary/10 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                <Clock className="w-8 h-8 text-primary" />
-              </div>
-              <h3 className="text-xl font-bold mb-2">Plus de 25 ans d'expérience</h3>
-              <p className="text-gray-600">
-                Expertise dans tous les domaines de l'électricité résidentielle et tertiaire.
-              </p>
-            </div>
+          <p className="text-center text-sm text-gray-500 uppercase tracking-widest mb-6">
+            Nous installons du matériel de grandes marques
+          </p>
+          <div className="flex flex-wrap justify-center items-center gap-x-10 gap-y-3">
+            {brands.map((brand) => (
+              <span key={brand} className="font-display font-bold text-lg text-ink/40">
+                {brand}
+              </span>
+            ))}
           </div>
         </div>
       </section>
 
       {/* Blog (3 derniers articles) */}
       {articles.length > 0 && (
-        <section className="py-16 bg-gray-50">
+        <section className="py-16 lg:py-24 bg-white">
           <div className="container mx-auto px-4">
-            <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">
-              Nos Derniers Articles
-            </h2>
+            <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-12">
+              <div>
+                <p className="text-secondary-dark font-semibold uppercase tracking-widest text-sm mb-2">
+                  Conseils &amp; actualités
+                </p>
+                <h2 className="text-3xl md:text-4xl font-bold text-ink">Nos derniers articles</h2>
+              </div>
+              <Link
+                to="/blog"
+                className="inline-flex items-center gap-2 text-primary hover:text-secondary-dark font-semibold shrink-0 transition-colors"
+              >
+                Voir tous les articles
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
               {articles.map((article) => (
                 <Link
                   key={article.id}
                   to={`/blog/${article.slug}`}
-                  className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow"
+                  className="group bg-white rounded-2xl border border-ink/10 shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300 overflow-hidden"
                 >
                   {article.featured_image && (
                     <div className="h-48 overflow-hidden">
                       <OptimizedImage
                         src={article.featured_image}
                         alt={article.title}
-                        className="w-full h-full"
+                        className="w-full h-full group-hover:scale-105 transition-transform duration-500"
                         objectFit="cover"
                       />
                     </div>
                   )}
                   <div className="p-6">
-                    <h3 className="text-xl font-bold mb-2 text-gray-900">{article.title}</h3>
+                    <h3 className="text-xl font-bold mb-2 text-ink group-hover:text-primary transition-colors">
+                      {article.title}
+                    </h3>
                     {article.excerpt && (
                       <p className="text-gray-600 mb-4 line-clamp-2">{article.excerpt}</p>
                     )}
@@ -311,15 +305,6 @@ export const Home = () => {
                 </Link>
               ))}
             </div>
-            <div className="text-center mt-12">
-              <Link
-                to="/blog"
-                className="inline-flex items-center space-x-2 text-primary hover:text-primary-dark font-semibold text-lg"
-              >
-                <span>Voir tous les articles</span>
-                <span>→</span>
-              </Link>
-            </div>
           </div>
         </section>
       )}
@@ -328,4 +313,3 @@ export const Home = () => {
     </>
   )
 }
-

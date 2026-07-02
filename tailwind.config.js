@@ -7,24 +7,31 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Couleurs électricien (bleu électrique + orange sécurité)
+        // Palette « artisan premium » : bleu nuit + ambre cuivré
         primary: {
-          DEFAULT: '#0066CC',  // Bleu électrique
-          dark: '#004C99',
-          light: '#3385D6',
+          DEFAULT: '#123A5F',  // Bleu nuit pétrole
+          dark: '#0B2740',
+          light: '#3A6B99',
         },
         secondary: {
-          DEFAULT: '#FF6B35',  // Orange sécurité
-          dark: '#E55A2B',
-          light: '#FF8555',
+          DEFAULT: '#E8850C',  // Ambre cuivré (CTA)
+          dark: '#C26D04',
+          light: '#FFA733',
         },
-        accent: '#FFD700',     // Jaune (éclair)
+        accent: '#FFC53D',     // Or chaud (étoiles, éclair)
+        ink: '#0A1B2E',        // Fond sombre (hero, footer)
+        paper: '#F7F4ED',      // Fond clair chaud
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
+        sans: ['Archivo', 'system-ui', 'sans-serif'],
+        display: ['"Bricolage Grotesque"', 'Archivo', 'sans-serif'],
+      },
+      boxShadow: {
+        card: '0 1px 2px rgba(10, 27, 46, 0.06), 0 8px 24px -12px rgba(10, 27, 46, 0.18)',
+        'card-hover': '0 2px 4px rgba(10, 27, 46, 0.08), 0 20px 40px -16px rgba(10, 27, 46, 0.28)',
+        glow: '0 0 0 4px rgba(232, 133, 12, 0.18)',
       },
     },
   },
   plugins: [],
 }
-

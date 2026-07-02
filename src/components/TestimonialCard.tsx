@@ -18,7 +18,7 @@ export const TestimonialCard = ({
   date
 }: TestimonialCardProps) => {
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 h-full border-l-4 border-primary">
+    <div className="bg-white rounded-2xl border border-ink/10 shadow-card p-6 h-full flex flex-col">
       {/* Étoiles */}
       <div className="flex items-center space-x-1 mb-4">
         {[...Array(5)].map((_, i) => (
@@ -34,19 +34,19 @@ export const TestimonialCard = ({
       </div>
 
       {/* Commentaire */}
-      <p className="text-gray-700 mb-6 italic leading-relaxed">
-        "{comment}"
+      <p className="text-gray-700 mb-6 leading-relaxed flex-grow">
+        «&nbsp;{comment}&nbsp;»
       </p>
 
       {/* Informations client */}
-      <div className="border-t pt-4">
-        <div className="font-semibold text-gray-900">{clientName}</div>
+      <div className="border-t border-ink/10 pt-4">
+        <div className="font-display font-bold text-ink">{clientName}</div>
         {clientLocation && (
           <div className="text-sm text-gray-500">{clientLocation}</div>
         )}
         <div className="flex items-center justify-between mt-2">
           {serviceType && (
-            <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded">
+            <span className="text-xs bg-secondary/10 text-secondary-dark font-medium px-2 py-1 rounded-full">
               {serviceType}
             </span>
           )}
@@ -58,4 +58,3 @@ export const TestimonialCard = ({
     </div>
   )
 }
-

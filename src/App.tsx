@@ -2,6 +2,7 @@ import { lazy, Suspense } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { Header } from './components/Header'
 import { Footer } from './components/Footer'
+import { MobileCallBar } from './components/MobileCallBar'
 import { TrackingProvider } from './components/TrackingProvider'
 
 // Lazy loading des pages pour améliorer les performances
@@ -31,7 +32,7 @@ function App() {
   return (
     <Router>
       <TrackingProvider>
-        <div className="min-h-screen flex flex-col">
+        <div className="min-h-screen flex flex-col pb-[68px] md:pb-0">
           <Header />
           <main className="flex-grow">
             <Routes>
@@ -103,6 +104,7 @@ function App() {
             </Routes>
           </main>
           <Footer />
+          <MobileCallBar />
         </div>
       </TrackingProvider>
     </Router>
