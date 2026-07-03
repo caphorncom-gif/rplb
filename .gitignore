@@ -33,3 +33,7 @@ google-service-account-key.json
 *-service-account-key.json
 **/google-service-account-key.json
 .vercel
+
+# Rapports mensuels clients : config (emails privés) + brouillons générés
+scripts/clients.config.mjs
+rapports/
