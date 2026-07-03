@@ -68,7 +68,7 @@ const localLandingPages = [
   { city: 'saint-jean-aux-bois', priority: '0.7', changefreq: 'monthly' },
   { city: 'saint-vaast-de-longmont', priority: '0.7', changefreq: 'monthly' },
   { city: 'vieux-moulin', priority: '0.7', changefreq: 'monthly' },
-  { city: 'ner', priority: '0.7', changefreq: 'monthly' },
+  { city: 'nery', priority: '0.7', changefreq: 'monthly' },
   { city: 'saintines', priority: '0.7', changefreq: 'monthly' },
   { city: 'bethisy-saint-martin', priority: '0.7', changefreq: 'monthly' },
   { city: 'bethisy-saint-pierre', priority: '0.7', changefreq: 'monthly' },

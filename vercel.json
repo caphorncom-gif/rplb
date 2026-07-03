@@ -2,6 +2,11 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "redirects": [
     {
+      "source": "/electricien/ner",
+      "destination": "/electricien/nery",
+      "permanent": true
+    },
+    {
       "source": "/(.*)",
       "has": [{ "type": "host", "value": "rplb-electricite.fr" }],
       "destination": "https://www.rplb-electricite.fr/$1",

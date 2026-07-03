@@ -198,8 +198,8 @@ export const LOCAL_CITIES: Record<string, CityData> = {
     description: 'Commune de l\'Oise, Vieux-Moulin bénéficie de nos interventions électriques rapides.',
     priority: 0.7
   },
-  'ner': {
-    slug: 'ner',
+  'nery': {
+    slug: 'nery',
     name: 'Néry',
     postalCode: '60320',
     department: 'Oise',
@@ -309,7 +309,7 @@ export const LOCAL_CITIES: Record<string, CityData> = {
     department: 'Oise',
     lat: 49.3000,
     lng: 2.6000,
-    description: 'Située sur les bords de l\'Oise, Pont-Sainte-Maxence fait partie de notre zone d\'intervention privilégiée.',
+    description: 'Ville-pont sur les bords de l\'Oise, à mi-chemin entre Compiègne et Senlis, Pont-Sainte-Maxence associe un centre ancien, des quartiers résidentiels pavillonnaires et des secteurs d\'habitat collectif. Cette variété d\'habitations génère des besoins électriques différents : mise aux normes NF C 15-100 et rénovation de tableau électrique dans les logements anciens, installation neuve et domotique dans le pavillonnaire récent, sans oublier le dépannage électrique urgent. RPLB Électricité intervient à Pont-Sainte-Maxence et dans les communes proches (Saint-Martin-Longueau, Sacy-le-Grand) pour les particuliers et les professionnels. Artisan certifié, intervention rapide, devis gratuit.',
     priority: 0.9
   },
   'saint-martin-longueau': {
@@ -351,7 +351,7 @@ export const LOCAL_CITIES: Record<string, CityData> = {
     department: 'Oise',
     lat: 49.2333,
     lng: 2.9000,
-    description: 'Ville médiévale du Valois, Crépy-en-Valois bénéficie de notre expertise en électricité résidentielle et tertiaire.',
+    description: 'Cité médiévale du Valois à l\'est de l\'Oise, Crépy-en-Valois conserve un centre historique (vestiges des remparts, vieilles demeures) entouré de lotissements pavillonnaires et de zones d\'activité en développement. Les logements anciens du cœur de ville demandent souvent une rénovation électrique et une mise aux normes NF C 15-100, tandis que les quartiers récents privilégient les installations modernes : domotique, borne de recharge, climatisation. RPLB Électricité intervient à Crépy-en-Valois pour le dépannage électrique urgent, l\'installation neuve, la rénovation complète et la mise en sécurité, chez les particuliers comme dans les locaux professionnels. Artisan qualifié, devis gratuit.',
     priority: 0.9
   },
   'vaumoise': {
@@ -393,7 +393,7 @@ export const LOCAL_CITIES: Record<string, CityData> = {
     department: 'Oise',
     lat: 49.2000,
     lng: 2.5833,
-    description: 'Ville historique et touristique, Senlis est desservie par nos électriciens qualifiés pour tous vos besoins.',
+    description: 'Ville d\'art et d\'histoire au sud de l\'Oise, Senlis mêle un centre médiéval classé (cathédrale Notre-Dame, remparts gallo-romains, ruelles pavées du Vieux-Senlis) et des quartiers résidentiels plus récents comme Brichebay ou la Nouvelle-France. Ce patrimoine impose des interventions électriques adaptées : rénovation et mise aux normes NF C 15-100 dans le bâti ancien, souvent protégé, comme installations modernes dans les logements récents (tableau électrique, domotique, borne de recharge, alarme). RPLB Électricité intervient à Senlis pour le dépannage électrique, l\'installation neuve, la rénovation complète et la mise en sécurité de votre habitation ou de votre local professionnel. Artisan certifié Qualifelec et RGE, devis gratuit.',
     priority: 0.9,
     meta_title: 'Électricien à Senlis (60) | SARL RPLB Électricité',
     meta_description:
@@ -448,7 +448,7 @@ export const LOCAL_CITIES: Record<string, CityData> = {
     department: 'Oise',
     lat: 49.5833,
     lng: 3.0000,
-    description: 'Ancienne capitale du Vermandois, Noyon fait partie de notre zone d\'intervention dans l\'Oise.',
+    description: 'Ancienne cité épiscopale du nord de l\'Oise, Noyon est marquée par sa cathédrale Notre-Dame et son centre-ville ancien, entouré de quartiers pavillonnaires et de zones d\'habitat collectif. Entre bâti ancien à remettre aux normes et pavillons récents à équiper, les besoins électriques y sont variés : rénovation de tableau électrique vétuste, mise aux normes NF C 15-100, dépannage urgent, installation neuve, éclairage, domotique et borne de recharge. RPLB Électricité intervient à Noyon et dans les communes voisines (Sempigny, Suzoy, Salency) pour les particuliers comme pour les professionnels. Artisan qualifié, intervention rapide, devis gratuit.',
     priority: 0.9,
     meta_title: 'Électricien à Noyon (60) | Dépannage & Installation | RPLB',
     meta_description:
@@ -493,7 +493,7 @@ export const LOCAL_CITIES: Record<string, CityData> = {
     department: 'Oise',
     lat: 49.2667,
     lng: 2.4833,
-    description: 'Ville importante de l\'Oise, Creil est desservie par nos électriciens professionnels.',
+    description: 'Pôle urbain majeur du sud de l\'Oise sur les bords de l\'Oise, Creil combine centre-ville dense, quartiers d\'habitat collectif (Rouher, Plateau Rouher) et secteurs pavillonnaires. Cette diversité de logements — appartements, maisons individuelles, copropriétés, locaux professionnels — appelle des prestations électriques variées : mise aux normes NF C 15-100, rénovation et remplacement de tableau électrique, dépannage électrique urgent, installation neuve, éclairage, domotique et borne de recharge pour véhicule électrique. RPLB Électricité intervient à Creil et dans l\'agglomération creilloise (Nogent-sur-Oise, Montataire, Villers-Saint-Paul). Artisan certifié Qualifelec et RGE, devis gratuit.',
     priority: 0.8,
     meta_title: 'Électricien à Creil (60) | Installation & Dépannage | RPLB',
     meta_description:
