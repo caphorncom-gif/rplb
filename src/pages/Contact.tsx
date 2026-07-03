@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { SEO } from '../components/SEO'
 import { supabase } from '../lib/supabase'
 import { Phone, Mail, MapPin, Clock, Send, CheckCircle } from 'lucide-react'
-import { useConversionTracking } from '../hooks/useTracking'
+import { recordConversion } from '../lib/conversions'
 
 interface Service {
   id: string
@@ -11,7 +11,6 @@ interface Service {
 }
 
 export const Contact = () => {
-  const { trackFormSubmission, trackPhoneCall, trackEmailClick } = useConversionTracking()
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -69,10 +68,10 @@ export const Contact = () => {
         }
       }
 
-      // Suivre la conversion
-      trackFormSubmission('contact_form', {
-        service_type: formData.service_type,
-        city: formData.city
+      // Suivre la conversion (GA4 + Vercel)
+      recordConversion('contact_form', {
+        service_type: formData.service_type || '',
+        city: formData.city || ''
       })
 
       // Envoyer l'email via Supabase Edge Function
@@ -173,20 +172,18 @@ export const Contact = () => {
                     <p className="font-semibold text-gray-900">Téléphone</p>
                     <p className="text-gray-700">
                       <span className="font-medium">Romain Pagnier :</span>{' '}
-                      <a 
-                        href={`tel:${phoneNumber.replace(/\s/g, '')}`} 
+                      <a
+                        href={`tel:${phoneNumber.replace(/\s/g, '')}`}
                         className="text-gray-600 hover:text-primary"
-                        onClick={() => trackPhoneCall(phoneNumber)}
                       >
                         {phoneNumber}
                       </a>
                     </p>
                     <p className="text-gray-700 mt-1">
                       <span className="font-medium">Ludovic Bozo :</span>{' '}
-                      <a 
-                        href={`tel:${mobileNumber.replace(/\s/g, '')}`} 
+                      <a
+                        href={`tel:${mobileNumber.replace(/\s/g, '')}`}
                         className="text-gray-600 hover:text-primary"
-                        onClick={() => trackPhoneCall(mobileNumber)}
                       >
                         {mobileNumber}
                       </a>
@@ -198,10 +195,9 @@ export const Contact = () => {
                   <Mail className="w-6 h-6 text-primary mt-1 flex-shrink-0" />
                   <div>
                     <p className="font-semibold text-gray-900">Email</p>
-                    <a 
-                      href={`mailto:${email}`} 
+                    <a
+                      href={`mailto:${email}`}
                       className="text-gray-600 hover:text-primary break-all"
-                      onClick={() => trackEmailClick(email)}
                     >
                       {email}
                     </a>
