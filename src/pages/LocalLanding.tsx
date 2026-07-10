@@ -6,7 +6,7 @@ import { ServiceCard } from '../components/ServiceCard'
 import { supabase } from '../lib/supabase'
 import { MapPin, Phone, Clock, CheckCircle } from 'lucide-react'
 import { getServiceIcon } from '../lib/serviceIcons'
-import { getCityBySlug, getAllCities } from '../data/localCities'
+import { getCityBySlug, getAllCities, shouldIndexCity } from '../data/localCities'
 
 interface Service {
   id: string
@@ -92,6 +92,7 @@ export const LocalLanding = () => {
         documentTitleVerbatim={!!cityData.meta_title}
         description={pageDescription}
         keywords={pageKeywords}
+        noindex={!shouldIndexCity(cityData)}
         breadcrumbs={[
           { name: 'Accueil', url: 'https://www.rplb-electricite.fr/' },
           { name: `Électricien ${cityName}`, url: `https://www.rplb-electricite.fr/electricien/${city}` }

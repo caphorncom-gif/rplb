@@ -13,7 +13,38 @@ export interface CityData {
   /** Titre document / Open Graph complet (sans suffixe automatique "| siteName") */
   meta_title?: string
   meta_description?: string
+  /**
+   * Force l'exclusion de l'index (balise robots noindex).
+   * Par défaut, seules les communes listées dans INDEXED_CITY_SLUGS sont indexées.
+   * Renseigner uniquement pour surcharger explicitement le comportement par défaut.
+   */
+  noindex?: boolean
 }
+
+/**
+ * Communes indexables : demande de recherche réelle (≥ ~30 requêtes/mois, source
+ * Google Ads / DataForSEO 2026-07) OU commune-siège. Toutes ont un contenu de page
+ * unique. Les autres communes partagent une description générique et sont mises en
+ * noindex pour éviter le contenu quasi-dupliqué (risque « doorway pages ») et
+ * concentrer le budget de crawl sur les pages à enjeu.
+ * Pour indexer une nouvelle commune : lui écrire une description unique PUIS ajouter
+ * son slug ici.
+ */
+export const INDEXED_CITY_SLUGS: ReadonlySet<string> = new Set([
+  'longueil-sainte-marie', // siège
+  'compiegne',
+  'creil',
+  'senlis',
+  'noyon',
+  'crepy-en-valois',
+  'montataire',
+  'pont-sainte-maxence',
+  'thourotte',
+])
+
+/** True si la page commune doit être indexée par les moteurs. */
+export const shouldIndexCity = (city: CityData): boolean =>
+  city.noindex === true ? false : INDEXED_CITY_SLUGS.has(city.slug)
 
 export const LOCAL_CITIES: Record<string, CityData> = {
   // Longueil-Sainte-Marie (centre)
@@ -287,7 +318,7 @@ export const LOCAL_CITIES: Record<string, CityData> = {
     department: 'Oise',
     lat: 49.4833,
     lng: 2.8833,
-    description: 'Ville de l\'Oise, Thourotte bénéficie de nos services électriques professionnels.',
+    description: 'Ville industrielle de la vallée de l\'Oise réputée pour sa verrerie, Thourotte s\'étire le long du canal latéral entre habitat ouvrier ancien, lotissements pavillonnaires et zones d\'activité. Entre maisons de brique à remettre aux normes et constructions récentes à équiper, les besoins électriques y sont variés : rénovation de tableau électrique, mise aux normes NF C 15-100, dépannage électrique urgent, installation neuve, éclairage, domotique et borne de recharge pour véhicule électrique. RPLB Électricité intervient à Thourotte et dans les communes voisines de la vallée (Le Plessis-Brion, Ribécourt-Dreslincourt, Coudun) pour les particuliers comme pour les professionnels. Artisan qualifié, intervention rapide, devis gratuit.',
     priority: 0.8
   },
   'ribecourt-dreslincourt': {
@@ -309,7 +340,7 @@ export const LOCAL_CITIES: Record<string, CityData> = {
     department: 'Oise',
     lat: 49.3000,
     lng: 2.6000,
-    description: 'Située sur les bords de l\'Oise, Pont-Sainte-Maxence fait partie de notre zone d\'intervention privilégiée.',
+    description: 'Ville-pont sur les bords de l\'Oise, à mi-chemin entre Compiègne et Senlis, Pont-Sainte-Maxence associe un centre ancien, des quartiers résidentiels pavillonnaires et des secteurs d\'habitat collectif. Cette variété d\'habitations génère des besoins électriques différents : mise aux normes NF C 15-100 et rénovation de tableau électrique dans les logements anciens, installation neuve et domotique dans le pavillonnaire récent, sans oublier le dépannage électrique urgent. RPLB Électricité intervient à Pont-Sainte-Maxence et dans les communes proches (Saint-Martin-Longueau, Sacy-le-Grand) pour les particuliers et les professionnels. Artisan certifié, intervention rapide, devis gratuit.',
     priority: 0.9
   },
   'saint-martin-longueau': {
@@ -486,7 +517,7 @@ export const LOCAL_CITIES: Record<string, CityData> = {
     department: 'Oise',
     lat: 49.2500,
     lng: 2.4333,
-    description: 'Commune industrielle de l\'Oise, Montataire bénéficie de nos services électriques pour particuliers et professionnels.',
+    description: 'Ville de l\'agglomération creilloise dominée par son château médiéval et son passé sidérurgique, Montataire associe un centre ancien, de vastes ensembles d\'habitat collectif (Les Martinets, Le Marais) et des quartiers pavillonnaires accrochés aux coteaux de l\'Oise. Ce parc de logements varié — copropriétés, logements sociaux, maisons individuelles, locaux professionnels et ateliers — appelle des interventions électriques diverses : rénovation et remplacement de tableau électrique vétuste, mise aux normes NF C 15-100, dépannage électrique urgent, installation neuve, éclairage, domotique et borne de recharge. RPLB Électricité intervient à Montataire et dans l\'agglomération creilloise (Creil, Nogent-sur-Oise, Villers-Saint-Paul, Saint-Leu-d\'Esserent) pour les particuliers comme pour les professionnels. Artisan qualifié, intervention rapide, devis gratuit.',
     priority: 0.9
   },
   'creil': {
