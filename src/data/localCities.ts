@@ -13,7 +13,38 @@ export interface CityData {
   /** Titre document / Open Graph complet (sans suffixe automatique "| siteName") */
   meta_title?: string
   meta_description?: string
+  /**
+   * Force l'exclusion de l'index (balise robots noindex).
+   * Par défaut, seules les communes listées dans INDEXED_CITY_SLUGS sont indexées.
+   * Renseigner uniquement pour surcharger explicitement le comportement par défaut.
+   */
+  noindex?: boolean
 }
+
+/**
+ * Communes indexables : demande de recherche réelle (≥ ~30 requêtes/mois, source
+ * Google Ads / DataForSEO 2026-07) OU commune-siège. Toutes ont un contenu de page
+ * unique. Les autres communes partagent une description générique et sont mises en
+ * noindex pour éviter le contenu quasi-dupliqué (risque « doorway pages ») et
+ * concentrer le budget de crawl sur les pages à enjeu.
+ * Pour indexer une nouvelle commune : lui écrire une description unique PUIS ajouter
+ * son slug ici.
+ */
+export const INDEXED_CITY_SLUGS: ReadonlySet<string> = new Set([
+  'longueil-sainte-marie', // siège
+  'compiegne',
+  'creil',
+  'senlis',
+  'noyon',
+  'crepy-en-valois',
+  'montataire',
+  'pont-sainte-maxence',
+  'thourotte',
+])
+
+/** True si la page commune doit être indexée par les moteurs. */
+export const shouldIndexCity = (city: CityData): boolean =>
+  city.noindex === true ? false : INDEXED_CITY_SLUGS.has(city.slug)
 
 export const LOCAL_CITIES: Record<string, CityData> = {
   // Longueil-Sainte-Marie (centre)
@@ -198,8 +229,8 @@ export const LOCAL_CITIES: Record<string, CityData> = {
     description: 'Commune de l\'Oise, Vieux-Moulin bénéficie de nos interventions électriques rapides.',
     priority: 0.7
   },
-  'ner': {
-    slug: 'ner',
+  'nery': {
+    slug: 'nery',
     name: 'Néry',
     postalCode: '60320',
     department: 'Oise',
@@ -287,7 +318,7 @@ export const LOCAL_CITIES: Record<string, CityData> = {
     department: 'Oise',
     lat: 49.4833,
     lng: 2.8833,
-    description: 'Ville de l\'Oise, Thourotte bénéficie de nos services électriques professionnels.',
+    description: 'Ville industrielle de la vallée de l\'Oise réputée pour sa verrerie, Thourotte s\'étire le long du canal latéral entre habitat ouvrier ancien, lotissements pavillonnaires et zones d\'activité. Entre maisons de brique à remettre aux normes et constructions récentes à équiper, les besoins électriques y sont variés : rénovation de tableau électrique, mise aux normes NF C 15-100, dépannage électrique urgent, installation neuve, éclairage, domotique et borne de recharge pour véhicule électrique. RPLB Électricité intervient à Thourotte et dans les communes voisines de la vallée (Le Plessis-Brion, Ribécourt-Dreslincourt, Coudun) pour les particuliers comme pour les professionnels. Artisan qualifié, intervention rapide, devis gratuit.',
     priority: 0.8
   },
   'ribecourt-dreslincourt': {
@@ -309,7 +340,7 @@ export const LOCAL_CITIES: Record<string, CityData> = {
     department: 'Oise',
     lat: 49.3000,
     lng: 2.6000,
-    description: 'Située sur les bords de l\'Oise, Pont-Sainte-Maxence fait partie de notre zone d\'intervention privilégiée.',
+    description: 'Ville-pont sur les bords de l\'Oise, à mi-chemin entre Compiègne et Senlis, Pont-Sainte-Maxence associe un centre ancien, des quartiers résidentiels pavillonnaires et des secteurs d\'habitat collectif. Cette variété d\'habitations génère des besoins électriques différents : mise aux normes NF C 15-100 et rénovation de tableau électrique dans les logements anciens, installation neuve et domotique dans le pavillonnaire récent, sans oublier le dépannage électrique urgent. RPLB Électricité intervient à Pont-Sainte-Maxence et dans les communes proches (Saint-Martin-Longueau, Sacy-le-Grand) pour les particuliers et les professionnels. Artisan certifié, intervention rapide, devis gratuit.',
     priority: 0.9
   },
   'saint-martin-longueau': {
@@ -351,8 +382,11 @@ export const LOCAL_CITIES: Record<string, CityData> = {
     department: 'Oise',
     lat: 49.2333,
     lng: 2.9000,
-    description: 'Ville médiévale du Valois, Crépy-en-Valois bénéficie de notre expertise en électricité résidentielle et tertiaire.',
-    priority: 0.9
+    description: 'Ancienne capitale du Valois, Crépy-en-Valois associe un centre médiéval au bâti ancien et de vastes quartiers pavillonnaires prisés des familles qui travaillent à Paris grâce à la liaison ferroviaire directe. RPLB Électricité y intervient pour l\'ensemble de vos travaux électriques : dépannage urgent, rénovation électrique des maisons anciennes, mise aux normes NF C 15-100, modernisation et remplacement de tableaux électriques, ajout de prises, d\'éclairage et de circuits dédiés. Dans les logements récents et les pavillons, nous réalisons l\'installation électrique neuve, la domotique, le chauffage électrique et la pose de bornes de recharge pour véhicule électrique — un besoin croissant chez les actifs de la commune. Nos électriciens certifiés Qualifelec et RGE, avec plus de 25 ans d\'expérience, se déplacent à Crépy-en-Valois et dans les communes voisines (Vaumoise, Gondreville, Orrouy) du lundi au vendredi. Assurance décennale, devis gratuit et travaux garantis conformes aux normes.',
+    priority: 0.9,
+    meta_title: 'Électricien à Crépy-en-Valois (60) | Dépannage & Rénovation | RPLB',
+    meta_description:
+      'RPLB, électricien à Crépy-en-Valois (60800). Installation, dépannage, rénovation, mise aux normes, borne de recharge. Artisan certifié — Devis gratuit ☎ 07 86 17 22 82',
   },
   'vaumoise': {
     slug: 'vaumoise',
@@ -393,7 +427,7 @@ export const LOCAL_CITIES: Record<string, CityData> = {
     department: 'Oise',
     lat: 49.2000,
     lng: 2.5833,
-    description: 'Ville historique et touristique, Senlis est desservie par nos électriciens qualifiés pour tous vos besoins.',
+    description: 'Cité royale au riche patrimoine, Senlis compte un secteur sauvegardé où le bâti ancien — hôtels particuliers, maisons de pierre du centre historique, abords de la cathédrale Notre-Dame — impose des interventions électriques soignées et respectueuses des contraintes des Bâtiments de France. RPLB Électricité intervient à Senlis pour la rénovation électrique des logements anciens, la mise aux normes NF C 15-100 des installations vétustes, le remplacement de tableaux électriques et la sécurisation des circuits. Dans les quartiers plus récents comme Villevert ou Brichebay, nous réalisons aussi les installations neuves, la domotique, l\'ajout de prises et de points lumineux, ainsi que la pose de bornes de recharge pour véhicule électrique. Dépannage rapide en cas de panne, coupure ou court-circuit : nos électriciens certifiés Qualifelec et RGE se déplacent à Senlis et dans les communes voisines (Chamant, Fleurines, Aumont-en-Halatte) du lundi au vendredi. Devis gratuit et détaillé pour tous vos travaux, du simple dépannage à la rénovation électrique complète.',
     priority: 0.9,
     meta_title: 'Électricien à Senlis (60) | SARL RPLB Électricité',
     meta_description:
@@ -448,7 +482,7 @@ export const LOCAL_CITIES: Record<string, CityData> = {
     department: 'Oise',
     lat: 49.5833,
     lng: 3.0000,
-    description: 'Ancienne capitale du Vermandois, Noyon fait partie de notre zone d\'intervention dans l\'Oise.',
+    description: 'Ancienne cité épiscopale dominée par sa cathédrale Notre-Dame, Noyon mêle centre-ville ancien, quartiers pavillonnaires et zones d\'activité comme le Mont Renaud. RPLB Électricité y intervient pour tous vos travaux d\'électricité : dépannage urgent en cas de panne ou de disjonction, rénovation électrique des maisons anciennes du centre, mise aux normes NF C 15-100, remplacement et modernisation de tableaux électriques, ajout de circuits, prises et éclairage. Pour les logements neufs et les extensions, nous réalisons l\'installation électrique complète, la domotique, le chauffage électrique performant et la pose de bornes de recharge pour véhicule électrique. Nos électriciens certifiés Qualifelec et RGE, forts de plus de 25 ans d\'expérience, se déplacent à Noyon et dans les communes voisines (Sempigny, Suzoy, Salency, Genvry) du lundi au vendredi, avec assurance décennale et devis gratuit. Que vous soyez particulier ou professionnel, nous vous garantissons des travaux conformes et durables, à des tarifs transparents.',
     priority: 0.9,
     meta_title: 'Électricien à Noyon (60) | Dépannage & Installation | RPLB',
     meta_description:
@@ -483,7 +517,7 @@ export const LOCAL_CITIES: Record<string, CityData> = {
     department: 'Oise',
     lat: 49.2500,
     lng: 2.4333,
-    description: 'Commune industrielle de l\'Oise, Montataire bénéficie de nos services électriques pour particuliers et professionnels.',
+    description: 'Ville de l\'agglomération creilloise dominée par son château médiéval et son passé sidérurgique, Montataire associe un centre ancien, de vastes ensembles d\'habitat collectif (Les Martinets, Le Marais) et des quartiers pavillonnaires accrochés aux coteaux de l\'Oise. Ce parc de logements varié — copropriétés, logements sociaux, maisons individuelles, locaux professionnels et ateliers — appelle des interventions électriques diverses : rénovation et remplacement de tableau électrique vétuste, mise aux normes NF C 15-100, dépannage électrique urgent, installation neuve, éclairage, domotique et borne de recharge. RPLB Électricité intervient à Montataire et dans l\'agglomération creilloise (Creil, Nogent-sur-Oise, Villers-Saint-Paul, Saint-Leu-d\'Esserent) pour les particuliers comme pour les professionnels. Artisan qualifié, intervention rapide, devis gratuit.',
     priority: 0.9
   },
   'creil': {
@@ -493,7 +527,7 @@ export const LOCAL_CITIES: Record<string, CityData> = {
     department: 'Oise',
     lat: 49.2667,
     lng: 2.4833,
-    description: 'Ville importante de l\'Oise, Creil est desservie par nos électriciens professionnels.',
+    description: 'Ville la plus peuplée de l\'agglomération creilloise (ACSO), Creil se caractérise par un habitat dense — immeubles collectifs, copropriétés, maisons de ville des quartiers Rouher, Gournay-les-Usines et du centre-ville proche de la gare. RPLB Électricité y répond à des besoins variés : dépannage électrique rapide, mise en sécurité et mise aux normes NF C 15-100 des installations anciennes, rénovation de tableaux électriques dans les appartements et copropriétés, remplacement de circuits vétustes et recherche de pannes. Pour les projets neufs ou les rénovations lourdes, nous assurons l\'installation électrique complète, la domotique, l\'éclairage, l\'ajout de prises et la pose de bornes de recharge pour véhicule électrique. Nos électriciens certifiés Qualifelec et RGE interviennent à Creil et dans les communes voisines (Nogent-sur-Oise, Montataire, Villers-Saint-Paul, Saint-Leu-d\'Esserent) du lundi au vendredi. Assurance décennale, travaux conformes aux normes en vigueur et devis gratuit pour particuliers comme pour professionnels.',
     priority: 0.8,
     meta_title: 'Électricien à Creil (60) | Installation & Dépannage | RPLB',
     meta_description:

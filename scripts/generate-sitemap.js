@@ -16,13 +16,17 @@ const supabaseUrl = process.env.VITE_SUPABASE_URL
 const supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY
 const siteUrl = process.env.VITE_SITE_URL || 'https://www.rplb-electricite.fr'
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.error('❌ Variables d\'environnement manquantes !')
-  console.error('Assurez-vous d\'avoir VITE_SUPABASE_URL et VITE_SUPABASE_ANON_KEY dans votre .env')
-  process.exit(1)
+// Supabase est optionnel : sans credentials (ex. déploiement Preview Vercel où
+// les variables ne sont pas exposées), on génère quand même le sitemap avec les
+// pages statiques + landing communes (les pages SEO-critiques). Seuls les
+// services/articles dynamiques sont alors omis. En production les variables sont
+// présentes et le sitemap est complet.
+const hasSupabase = Boolean(supabaseUrl && supabaseAnonKey)
+if (!hasSupabase) {
+  console.warn('⚠️  VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY absentes : sitemap généré sans les services/articles dynamiques.')
 }
 
-const supabase = createClient(supabaseUrl, supabaseAnonKey)
+const supabase = hasSupabase ? createClient(supabaseUrl, supabaseAnonKey) : null
 
 // Pages statiques
 const staticPages = [
@@ -36,9 +40,25 @@ const staticPages = [
   { url: '/mentions-legales', priority: '0.3', changefreq: 'yearly' }
 ]
 
+// Communes indexées uniquement (demande de recherche réelle ≥ ~30/mois ou siège,
+// avec contenu de page unique). Doit rester synchronisé avec INDEXED_CITY_SLUGS
+// dans src/data/localCities.ts. Les autres communes existent en noindex et sont
+// donc volontairement exclues du sitemap.
+const INDEXED_CITY_SLUGS = new Set([
+  'longueil-sainte-marie',
+  'compiegne',
+  'creil',
+  'senlis',
+  'noyon',
+  'crepy-en-valois',
+  'montataire',
+  'pont-sainte-maxence',
+  'thourotte'
+])
+
 // Landing pages locales pour le SEO - Toutes les communes dans un rayon de 15 km
 // Liste complète des communes autour de Longueil-Sainte-Marie
-const localLandingPages = [
+const allLocalLandingPages = [
   // Villes principales (priorité élevée)
   { city: 'longueil-sainte-marie', priority: '1.0', changefreq: 'monthly' },
   { city: 'compiegne', priority: '0.9', changefreq: 'monthly' },
@@ -68,7 +88,7 @@ const localLandingPages = [
   { city: 'saint-jean-aux-bois', priority: '0.7', changefreq: 'monthly' },
   { city: 'saint-vaast-de-longmont', priority: '0.7', changefreq: 'monthly' },
   { city: 'vieux-moulin', priority: '0.7', changefreq: 'monthly' },
-  { city: 'ner', priority: '0.7', changefreq: 'monthly' },
+  { city: 'nery', priority: '0.7', changefreq: 'monthly' },
   { city: 'saintines', priority: '0.7', changefreq: 'monthly' },
   { city: 'bethisy-saint-martin', priority: '0.7', changefreq: 'monthly' },
   { city: 'bethisy-saint-pierre', priority: '0.7', changefreq: 'monthly' },
@@ -117,6 +137,9 @@ const localLandingPages = [
   { city: 'villers-vicomte', priority: '0.7', changefreq: 'monthly' }
 ]
 
+// N'inclure au sitemap que les communes indexées (les autres sont en noindex)
+const localLandingPages = allLocalLandingPages.filter(page => INDEXED_CITY_SLUGS.has(page.city))
+
 async function generateSitemap() {
   console.log('🗺️  Génération du sitemap...\n')
 
@@ -131,51 +154,58 @@ async function generateSitemap() {
     })
   })
 
+  let services = null
+  let articles = null
+
   try {
-    // Récupérer les services actifs
-    console.log('📋 Récupération des services...')
-    const { data: services, error: servicesError } = await supabase
-      .from('services')
-      .select('slug, updated_at')
-      .eq('is_active', true)
+    if (supabase) {
+      // Récupérer les services actifs
+      console.log('📋 Récupération des services...')
+      const { data: servicesData, error: servicesError } = await supabase
+        .from('services')
+        .select('slug, updated_at')
+        .eq('is_active', true)
 
-    if (servicesError) {
-      console.error('❌ Erreur lors de la récupération des services:', servicesError.message)
-    } else if (services) {
-      console.log(`✅ ${services.length} service(s) trouvé(s)`)
-      services.forEach(service => {
-        urls.push({
-          url: `/services/${service.slug}`,
-          priority: '0.8',
-          changefreq: 'monthly',
-          lastmod: service.updated_at ? new Date(service.updated_at).toISOString().split('T')[0] : null
+      if (servicesError) {
+        console.error('❌ Erreur lors de la récupération des services:', servicesError.message)
+      } else if (servicesData) {
+        services = servicesData
+        console.log(`✅ ${services.length} service(s) trouvé(s)`)
+        services.forEach(service => {
+          urls.push({
+            url: `/services/${service.slug}`,
+            priority: '0.8',
+            changefreq: 'monthly',
+            lastmod: service.updated_at ? new Date(service.updated_at).toISOString().split('T')[0] : null
+          })
         })
-      })
-    }
+      }
 
-    // Récupérer les articles publiés
-    console.log('📰 Récupération des articles...')
-    const { data: articles, error: articlesError } = await supabase
-      .from('articles')
-      .select('slug, published_at, updated_at')
-      .eq('is_published', true)
+      // Récupérer les articles publiés
+      console.log('📰 Récupération des articles...')
+      const { data: articlesData, error: articlesError } = await supabase
+        .from('articles')
+        .select('slug, published_at, updated_at')
+        .eq('is_published', true)
 
-    if (articlesError) {
-      console.error('❌ Erreur lors de la récupération des articles:', articlesError.message)
-    } else if (articles) {
-      console.log(`✅ ${articles.length} article(s) trouvé(s)`)
-      articles.forEach(article => {
-        urls.push({
-          url: `/blog/${article.slug}`,
-          priority: '0.7',
-          changefreq: 'weekly',
-          lastmod: article.updated_at 
-            ? new Date(article.updated_at).toISOString().split('T')[0]
-            : article.published_at 
-            ? new Date(article.published_at).toISOString().split('T')[0]
-            : null
+      if (articlesError) {
+        console.error('❌ Erreur lors de la récupération des articles:', articlesError.message)
+      } else if (articlesData) {
+        articles = articlesData
+        console.log(`✅ ${articles.length} article(s) trouvé(s)`)
+        articles.forEach(article => {
+          urls.push({
+            url: `/blog/${article.slug}`,
+            priority: '0.7',
+            changefreq: 'weekly',
+            lastmod: article.updated_at
+              ? new Date(article.updated_at).toISOString().split('T')[0]
+              : article.published_at
+              ? new Date(article.published_at).toISOString().split('T')[0]
+              : null
+          })
         })
-      })
+      }
     }
 
     // Générer le XML
