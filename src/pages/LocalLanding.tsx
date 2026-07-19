@@ -428,7 +428,7 @@ export const LocalLanding = () => {
               description: 'Électricien professionnel à Compiègne (60200). Dépannage électrique urgent, installation neuve, rénovation électrique. Intervention rapide dans tous les quartiers de Compiègne : Centre-ville, Royallieu, Clos des Roses, Saint-Lazare. Certifié Qualifelec et RGE.',
               keywords: 'électricien compiègne, électricien compiègne 60200, dépannage électrique compiègne, installation électrique compiègne, électricien centre-ville compiègne, électricien royallieu compiègne'
             }),
-            sameAs: []
+            sameAs: ['https://www.google.com/maps?cid=11394334929053269026']
           })
         }}
       />

@@ -223,7 +223,9 @@ export const SEO = ({
         closes: '12:00'
       }
     ],
-    sameAs: []
+    // Profil Google Business (CID réel de l'établissement) — ancre l'entité au
+    // Knowledge Graph et relie le site à la fiche Google et à ses avis.
+    sameAs: ['https://www.google.com/maps?cid=11394334929053269026']
   }
 
   // Breadcrumb Schema

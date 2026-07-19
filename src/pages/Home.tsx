@@ -105,12 +105,19 @@ export const Home = () => {
   return (
     <>
       <SEO
-        title="Électricien Longueil-Sainte-Marie | RPLB Électricité"
-        description="Électricien professionnel à Longueil-Sainte-Marie et Compiègne. Services pour particuliers et professionnels. Dépannage, installation, rénovation électrique. Intervention rapide dans l'Oise."
-        keywords="électricien, dépannage électrique, installation électrique, rénovation électrique, Oise, Longueil-Sainte-Marie, Compiègne"
+        title="Électricien dans l'Oise — Compiègne & Senlis"
+        description="Électricien dans l'Oise : RPLB intervient à Compiègne, Senlis, Noyon, Crépy-en-Valois et alentours. Dépannage, installation, rénovation et mise aux normes électriques. Devis gratuit, artisans certifiés."
+        keywords="électricien Oise, électricien Compiègne, électricien Senlis, dépannage électrique, installation électrique, rénovation électrique, mise aux normes NF C 15-100"
       />
 
-      <Hero />
+      <Hero
+        title={
+          <>
+            Électricien dans l'Oise,{' '}
+            <span className="text-accent">l'électricité dans les règles de l'art</span>
+          </>
+        }
+      />
 
       <TrustBadges />
 
