@@ -30,15 +30,21 @@ interface Article {
   published_at: string | null
 }
 
+// Communes mises en avant sur la page d'accueil.
+// Doit rester aligné sur INDEXED_CITY_SLUGS (src/data/localCities.ts) : la home étant
+// la page la plus autoritaire, ses liens internes doivent pointer vers les pages
+// commune INDEXABLES (contenu unique, vrai potentiel de ranking), pas vers des pages
+// noindex. Ordre = par demande de recherche décroissante (source DataForSEO 2026-07).
 const interventionCities = [
-  { slug: 'longueil-sainte-marie', name: 'Longueil-Sainte-Marie' },
   { slug: 'compiegne', name: 'Compiègne' },
-  { slug: 'verberie', name: 'Verberie' },
-  { slug: 'pont-sainte-maxence', name: 'Pont-Sainte-Maxence' },
-  { slug: 'crepy-en-valois', name: 'Crépy-en-Valois' },
+  { slug: 'creil', name: 'Creil' },
   { slug: 'senlis', name: 'Senlis' },
   { slug: 'noyon', name: 'Noyon' },
+  { slug: 'crepy-en-valois', name: 'Crépy-en-Valois' },
   { slug: 'montataire', name: 'Montataire' },
+  { slug: 'pont-sainte-maxence', name: 'Pont-Sainte-Maxence' },
+  { slug: 'thourotte', name: 'Thourotte' },
+  { slug: 'longueil-sainte-marie', name: 'Longueil-Sainte-Marie' },
 ]
 
 const brands = ['Schneider Electric', 'Legrand', 'Hager', 'Somfy', 'Siemens', 'ABB']
@@ -210,11 +216,12 @@ export const Home = () => {
               Zone d'intervention
             </p>
             <h2 className="text-3xl md:text-4xl font-bold text-ink mb-4 text-balance">
-              À moins de 30 minutes de chez vous
+              Votre électricien dans l'Oise, à moins de 30 minutes de chez vous
             </h2>
             <p className="text-lg text-gray-600 mb-10">
               Basés à Longueil-Sainte-Marie, nous intervenons dans un rayon de 30 km : Compiègne,
-              Senlis, Pont-Sainte-Maxence, Crépy-en-Valois et toutes les communes alentour.
+              Creil, Senlis, Noyon, Crépy-en-Valois, Pont-Sainte-Maxence et toutes les communes
+              alentour de l'Oise.
             </p>
             <div className="flex flex-wrap justify-center gap-3">
               {interventionCities.map((city) => (
