@@ -89,7 +89,10 @@ export const LocalLanding = () => {
     <>
       <SEO
         title={pageTitle}
-        documentTitleVerbatim={!!cityData.meta_title}
+        /* pageTitle porte déjà la marque dans les trois cas (meta_title, variante
+           Compiègne, gabarit par défaut) : sans `verbatim`, SEO.tsx ajoutait un
+           second « | RPLB Électricité » et le titre était tronqué en SERP. */
+        documentTitleVerbatim
         description={pageDescription}
         keywords={pageKeywords}
         noindex={!shouldIndexCity(cityData)}
@@ -260,8 +263,8 @@ export const LocalLanding = () => {
             </p>
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 text-gray-600">
               {getAllCities()
+                .filter(shouldIndexCity)
                 .sort((a, b) => b.priority - a.priority)
-                .slice(0, 24)
                 .map((c) => (
                   <Link
                     key={c.slug}
@@ -339,9 +342,8 @@ export const LocalLanding = () => {
           <div className="max-w-4xl mx-auto">
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
               {getAllCities()
-                .filter(c => c.slug !== cityData.slug && c.priority >= 0.8)
+                .filter(c => c.slug !== cityData.slug && shouldIndexCity(c))
                 .sort((a, b) => b.priority - a.priority)
-                .slice(0, 12)
                 .map((c) => (
                   <Link
                     key={c.slug}
