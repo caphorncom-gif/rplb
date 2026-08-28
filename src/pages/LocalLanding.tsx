@@ -73,14 +73,29 @@ export const LocalLanding = () => {
   const cityName = cityData.name
   // Optimisation spéciale pour Compiègne
   const isCompiegne = cityData.slug === 'compiegne'
+  // Le fallback ne porte PAS le nom de marque : le composant SEO ajoute lui-même
+  // « | RPLB Électricité » quand documentTitleVerbatim est faux. L'inclure ici
+  // produisait un <title> avec la marque en double (Compiègne, Montataire,
+  // Pont-Sainte-Maxence, Thourotte, Longueil-Sainte-Marie).
   const pageTitle = cityData.meta_title
     ?? (isCompiegne
-      ? `Électricien Compiègne (60200) | Intervention Rapide 24/7 | RPLB Électricité`
-      : `Électricien ${cityName} (${cityData.postalCode}) | RPLB Électricité`)
+      ? `Électricien Compiègne (60200) | Dépannage & Rénovation`
+      : `Électricien ${cityName} (${cityData.postalCode})`)
   const pageDescription = cityData.meta_description
     ?? (isCompiegne
       ? `Électricien professionnel à Compiègne (60200) dans l'Oise. Dépannage électrique urgent, installation neuve, rénovation électrique. Intervention rapide dans tous les quartiers de Compiègne : Centre-ville, Royallieu, Clos des Roses, Saint-Lazare. Devis gratuit. Certifié Qualifelec et RGE.`
       : `Électricien professionnel à ${cityName} dans l'Oise. Dépannage, installation, rénovation électrique. Intervention rapide à ${cityName} et alentours. Devis gratuit.`)
+  // Maillage interne : on ne lie que les communes réellement indexables. Lier les
+  // ~64 pages en noindex diluait le maillage sans bénéfice — elles restent citées
+  // en texte plus bas pour l'information du visiteur.
+  const indexedCities = getAllCities()
+    .filter(shouldIndexCity)
+    .sort((a, b) => b.priority - a.priority)
+  const otherCityNames = getAllCities()
+    .filter(c => !shouldIndexCity(c) && c.slug !== cityData.slug)
+    .sort((a, b) => b.priority - a.priority)
+    .map(c => c.name)
+
   const pageKeywords = isCompiegne
     ? `électricien compiègne, électricien compiègne 60200, dépannage électrique compiègne, installation électrique compiègne, électricien centre-ville compiègne, électricien royallieu compiègne, électricien compiègne urgence, électricien compiègne devis gratuit, électricien compiègne rénovation, électricien compiègne domotique, électricien compiègne borne recharge, électricien oise`
     : `électricien ${cityName}, dépannage électrique ${cityName}, installation électrique ${cityName}, électricien ${cityData.postalCode}, électricien Oise`
@@ -103,7 +118,7 @@ export const LocalLanding = () => {
       <div className="bg-gradient-to-r from-primary to-primary-dark text-white py-16">
         <div className="container mx-auto px-4 text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
-            {isCompiegne ? 'Électricien Compiègne (60200) | Intervention Rapide' : `Électricien à ${cityName}`}
+            Électricien à {cityName} ({cityData.postalCode})
           </h1>
           <p className="text-xl text-gray-100 max-w-2xl mx-auto mb-6">
             {isCompiegne 
@@ -259,21 +274,19 @@ export const LocalLanding = () => {
               Nous intervenons à {cityName} et dans un rayon de 30km autour de Longueil-Sainte-Marie
             </p>
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 text-gray-600">
-              {getAllCities()
-                .sort((a, b) => b.priority - a.priority)
-                .slice(0, 24)
-                .map((c) => (
-                  <Link
-                    key={c.slug}
-                    to={`/electricien/${c.slug}`}
-                    className={`bg-white p-3 rounded shadow-sm text-sm text-center hover:bg-primary hover:text-white transition-colors ${c.name === cityName ? 'ring-2 ring-primary font-semibold' : ''}`}
-                  >
-                    {c.name}
-                  </Link>
-                ))}
+              {indexedCities.map((c) => (
+                <Link
+                  key={c.slug}
+                  to={`/electricien/${c.slug}`}
+                  className={`bg-white p-3 rounded shadow-sm text-sm text-center hover:bg-primary hover:text-white transition-colors ${c.name === cityName ? 'ring-2 ring-primary font-semibold' : ''}`}
+                >
+                  {c.name}
+                </Link>
+              ))}
             </div>
             <p className="text-sm text-gray-500 mt-4">
-              Et bien d'autres communes dans un rayon de 15 km autour de Longueil-Sainte-Marie
+              Nous intervenons également à {otherCityNames.slice(0, 20).join(', ')} et dans
+              les autres communes situées dans un rayon de 30 km autour de Longueil-Sainte-Marie.
             </p>
           </div>
         </div>
@@ -338,10 +351,8 @@ export const LocalLanding = () => {
           </h2>
           <div className="max-w-4xl mx-auto">
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-              {getAllCities()
-                .filter(c => c.slug !== cityData.slug && c.priority >= 0.8)
-                .sort((a, b) => b.priority - a.priority)
-                .slice(0, 12)
+              {indexedCities
+                .filter(c => c.slug !== cityData.slug)
                 .map((c) => (
                   <Link
                     key={c.slug}
@@ -356,34 +367,25 @@ export const LocalLanding = () => {
         </div>
       </section>
 
-      {/* Structured Data - LocalBusiness pour cette ville */}
+      {/* Structured Data - Service rendu dans cette commune.
+          On ne déclare PAS un LocalBusiness par commune : l'entreprise est unique
+          (siège à Longueil-Sainte-Marie) et les 73 pages produisaient autant
+          d'établissements fictifs, avec une streetAddress égale au nom de la ville.
+          Modélisation correcte pour une entreprise de zone de service (SAB) :
+          un seul établissement (#organization, émis par <SEO />) + un Service
+          par commune qui le référence via `provider`. */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
             '@context': 'https://schema.org',
-            '@type': 'LocalBusiness',
-            '@id': `https://www.rplb-electricite.fr/electricien/${cityData.slug}#localbusiness`,
-            name: isCompiegne 
-              ? 'RPLB Électricité - Électricien Compiègne (60200)'
-              : `RPLB Électricité - Électricien à ${cityName}`,
-            image: 'https://hgcpddzpqzfxrvfipsii.supabase.co/storage/v1/object/public/rplb-media/logo-rplb.png',
-            telephone: '07 86 17 22 82',
-            email: 'rplb.electricite@gmail.com',
+            '@type': 'Service',
+            '@id': `https://www.rplb-electricite.fr/electricien/${cityData.slug}#service`,
+            name: `Électricien à ${cityName} (${cityData.postalCode})`,
+            serviceType: 'Travaux d\'électricité',
+            description: pageDescription,
+            provider: { '@id': 'https://www.rplb-electricite.fr/#organization' },
             url: `https://www.rplb-electricite.fr/electricien/${cityData.slug}`,
-            address: {
-              '@type': 'PostalAddress',
-              streetAddress: cityName,
-              addressLocality: cityName,
-              postalCode: cityData.postalCode,
-              addressRegion: 'Hauts-de-France',
-              addressCountry: 'FR'
-            },
-            geo: {
-              '@type': 'GeoCoordinates',
-              latitude: cityData.lat,
-              longitude: cityData.lng
-            },
             areaServed: isCompiegne ? [
               {
                 '@type': 'City',
@@ -409,26 +411,9 @@ export const LocalLanding = () => {
               '@type': 'City',
               name: cityName
             },
-            priceRange: '€€',
-            openingHoursSpecification: [
-              {
-                '@type': 'OpeningHoursSpecification',
-                dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
-                opens: '08:00',
-                closes: '18:00'
-              },
-              {
-                '@type': 'OpeningHoursSpecification',
-                dayOfWeek: 'Saturday',
-                opens: '09:00',
-                closes: '12:00'
-              }
-            ],
-            ...(isCompiegne && {
-              description: 'Électricien professionnel à Compiègne (60200). Dépannage électrique urgent, installation neuve, rénovation électrique. Intervention rapide dans tous les quartiers de Compiègne : Centre-ville, Royallieu, Clos des Roses, Saint-Lazare. Certifié Qualifelec et RGE.',
-              keywords: 'électricien compiègne, électricien compiègne 60200, dépannage électrique compiègne, installation électrique compiègne, électricien centre-ville compiègne, électricien royallieu compiègne'
-            }),
-            sameAs: ['https://www.google.com/maps?cid=11394334929053269026']
+            // priceRange / openingHours / sameAs ne sont pas des propriétés de
+            // Service : elles décrivent l'établissement et restent portées par
+            // #organization (composant SEO), une seule fois pour tout le site.
           })
         }}
       />

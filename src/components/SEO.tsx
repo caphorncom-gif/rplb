@@ -209,18 +209,18 @@ export const SEO = ({
       }
     ],
     priceRange: '€€',
+    // Horaires alignés sur ce qu'affiche le site (« du lundi au vendredi, 8h-18h »,
+    // repris dans les pages communes et la FAQ). Le créneau « samedi 9h-12h » qui
+    // figurait ici contredisait le contenu visible : Google ignore — voire
+    // dévalue — des données structurées non corroborées par la page.
+    // Si RPLB ouvre réellement le samedi matin, remettre le créneau ICI **et**
+    // dans le contenu visible.
     openingHoursSpecification: [
       {
         '@type': 'OpeningHoursSpecification',
         dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
         opens: '08:00',
         closes: '18:00'
-      },
-      {
-        '@type': 'OpeningHoursSpecification',
-        dayOfWeek: 'Saturday',
-        opens: '09:00',
-        closes: '12:00'
       }
     ],
     // Profil Google Business (CID réel de l'établissement) — ancre l'entité au
