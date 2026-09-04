@@ -40,21 +40,41 @@ function totals(rows) {
   return rows.reduce((a, r) => ({ clicks: a.clicks + r.clicks, impressions: a.impressions + r.impressions }), { clicks: 0, impressions: 0 })
 }
 
+// Total réel : requête SANS dimension. Agréger la dimension `query` sous-déclare
+// fortement le trafic, car Google masque les requêtes rares pour préserver
+// l'anonymat des internautes (constaté le 04/09/2026 : 1 clic / 114 impr. via
+// `query` contre 15 clics / 320 impr. en réalité, soit 15× moins de clics).
+function grandTotal(rows) {
+  const r = rows[0]
+  return { clicks: r?.clicks ?? 0, impressions: r?.impressions ?? 0 }
+}
+
+const delta = (cur, prev) => {
+  if (!prev) return cur ? ' (nouveau)' : ''
+  const pct = Math.round(((cur - prev) / prev) * 100)
+  return ` (${pct >= 0 ? '+' : ''}${pct} %)`
+}
+
 const out = []
 try {
-  const [curQ, prevQ, curPages] = await Promise.all([
+  const [curTot, prevTot, curQ, curPages] = await Promise.all([
+    query(iso(start), iso(end), []),
+    query(iso(prevStart), iso(prevEnd), []),
     query(iso(start), iso(end), ['query'], 200),
-    query(iso(prevStart), iso(prevEnd), ['query'], 200),
     query(iso(start), iso(end), ['page'], 25),
   ])
 
-  const tCur = totals(curQ), tPrev = totals(prevQ)
+  const tCur = grandTotal(curTot), tPrev = grandTotal(prevTot)
   out.push(`# Rapport Search Console — RPLB`)
   out.push(`Propriété : ${SITE} · Période : ${iso(start)} → ${iso(end)} (vs 28 j précédents)\n`)
-  out.push(`**Total** : ${tCur.clicks} clics / ${tCur.impressions} impressions ` +
+  out.push(`**Total** : ${tCur.clicks} clics${delta(tCur.clicks, tPrev.clicks)} / ` +
+    `${tCur.impressions} impressions${delta(tCur.impressions, tPrev.impressions)} ` +
     `(préc. : ${tPrev.clicks} clics / ${tPrev.impressions} impr.)\n`)
 
+  const tQ = totals(curQ)
   out.push(`## Top requêtes (clics)`)
+  out.push(`_${tQ.clicks} clics / ${tQ.impressions} impr. seulement sont rattachables à une requête ` +
+    `nommée ; le reste correspond aux requêtes anonymisées par Google._`)
   curQ.sort((a, b) => b.clicks - a.clicks || b.impressions - a.impressions).slice(0, 10)
     .forEach(r => out.push(`- ${r.clicks} clics · ${r.impressions} impr · pos ${r.position.toFixed(1)} · « ${r.keys[0]} »`))
 
