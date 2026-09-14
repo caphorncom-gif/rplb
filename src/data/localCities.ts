@@ -55,8 +55,11 @@ export const LOCAL_CITIES: Record<string, CityData> = {
     department: 'Oise',
     lat: 49.2667,
     lng: 2.8833,
-    description: 'Notre ville d\'origine, Longueil-Sainte-Marie est au cœur de notre zone d\'intervention. Nous intervenons rapidement pour tous vos besoins électriques.',
-    priority: 1.0
+    description: 'Longueil-Sainte-Marie est la commune où RPLB Électricité est installé : c\'est d\'ici que partent toutes nos interventions dans l\'Oise, et c\'est donc ici que nos délais sont les plus courts. Ce village de la vallée de l\'Oise, entre la plaine agricole et la zone d\'activité de Longueil-Sainte-Marie, mêle habitat ancien en pierre, pavillons des dernières décennies et bâtiments d\'activité. À chaque type de bâti ses besoins : remplacement de tableau électrique et mise aux normes NF C 15-100 dans les maisons anciennes, installation électrique neuve et domotique dans le pavillonnaire récent, éclairage et puissance adaptée pour les locaux professionnels de la zone d\'activité. Nous intervenons aussi pour le dépannage électrique urgent, la rénovation complète, la climatisation, l\'alarme et la vidéosurveillance, ainsi que l\'installation de bornes de recharge pour véhicule électrique. Artisan qualifié Qualifelec et RGE, plus de 25 ans d\'expérience, assurance décennale : nous accompagnons les habitants et les entreprises de Longueil-Sainte-Marie (60126) et des communes voisines — Le Meux, Verberie, Jaux, Rivecourt, Chevrières — du devis gratuit à la mise en service.',
+    priority: 1.0,
+    meta_title: 'Électricien à Longueil-Sainte-Marie (60126) | RPLB Électricité',
+    meta_description:
+      'RPLB Électricité, votre électricien basé à Longueil-Sainte-Marie (60126). Installation, dépannage, rénovation, mise aux normes. Devis gratuit ☎ 07 86 17 22 82',
   },
   
   // Compiègne et environs
@@ -68,7 +71,10 @@ export const LOCAL_CITIES: Record<string, CityData> = {
     lat: 49.4178,
     lng: 2.8261,
     description: 'Ville impériale de l\'Oise située à seulement 1h de Paris, Compiègne est une destination privilégiée pour nos services électriques professionnels. Avec son riche patrimoine historique, ses quartiers résidentiels modernes (Centre-ville, Royallieu, Clos des Roses, Saint-Lazare) et sa proximité avec la forêt de Compiègne, la ville nécessite des interventions électriques adaptées à chaque contexte. Que vous habitiez dans le centre historique nécessitant des rénovations électriques respectueuses du patrimoine, ou dans les quartiers récents demandant des installations modernes (domotique, borne de recharge, climatisation), RPLB Électricité intervient rapidement à Compiègne pour tous vos besoins : dépannage électrique urgent, installation électrique neuve, rénovation complète, mise aux normes NF C 15-100, domotique, alarme et vidéosurveillance. Nos électriciens certifiés Qualifelec et RGE sont disponibles du lundi au vendredi pour intervenir rapidement à Compiègne et dans tous ses quartiers.',
-    priority: 0.9
+    priority: 0.9,
+    meta_title: 'Électricien à Compiègne (60200) | Dépannage & Rénovation | RPLB',
+    meta_description:
+      'RPLB, électricien à Compiègne (60200). Dépannage électrique, installation neuve, rénovation, mise aux normes, domotique. Devis gratuit ☎ 07 86 17 22 82',
   },
   'margny-les-compiegne': {
     slug: 'margny-les-compiegne',
@@ -319,7 +325,10 @@ export const LOCAL_CITIES: Record<string, CityData> = {
     lat: 49.4833,
     lng: 2.8833,
     description: 'Ville industrielle de la vallée de l\'Oise réputée pour sa verrerie, Thourotte s\'étire le long du canal latéral entre habitat ouvrier ancien, lotissements pavillonnaires et zones d\'activité. Entre maisons de brique à remettre aux normes et constructions récentes à équiper, les besoins électriques y sont variés : rénovation de tableau électrique, mise aux normes NF C 15-100, dépannage électrique urgent, installation neuve, éclairage, domotique et borne de recharge pour véhicule électrique. RPLB Électricité intervient à Thourotte et dans les communes voisines de la vallée (Le Plessis-Brion, Ribécourt-Dreslincourt, Coudun) pour les particuliers comme pour les professionnels. Artisan qualifié, intervention rapide, devis gratuit.',
-    priority: 0.8
+    priority: 0.8,
+    meta_title: 'Électricien à Thourotte (60) | Dépannage & Rénovation | RPLB',
+    meta_description:
+      'RPLB, électricien à Thourotte (60150). Tableau électrique, mise aux normes, dépannage, installation neuve. Artisan qualifié — Devis gratuit ☎ 07 86 17 22 82',
   },
   'ribecourt-dreslincourt': {
     slug: 'ribecourt-dreslincourt',
@@ -341,7 +350,10 @@ export const LOCAL_CITIES: Record<string, CityData> = {
     lat: 49.3000,
     lng: 2.6000,
     description: 'Ville-pont sur les bords de l\'Oise, à mi-chemin entre Compiègne et Senlis, Pont-Sainte-Maxence associe un centre ancien, des quartiers résidentiels pavillonnaires et des secteurs d\'habitat collectif. Cette variété d\'habitations génère des besoins électriques différents : mise aux normes NF C 15-100 et rénovation de tableau électrique dans les logements anciens, installation neuve et domotique dans le pavillonnaire récent, sans oublier le dépannage électrique urgent. RPLB Électricité intervient à Pont-Sainte-Maxence et dans les communes proches (Saint-Martin-Longueau, Sacy-le-Grand) pour les particuliers et les professionnels. Artisan certifié, intervention rapide, devis gratuit.',
-    priority: 0.9
+    priority: 0.9,
+    meta_title: 'Électricien à Pont-Sainte-Maxence (60) | RPLB Électricité',
+    meta_description:
+      'RPLB, électricien à Pont-Sainte-Maxence (60700). Mise aux normes, tableau électrique, dépannage, installation. Artisan certifié — Devis gratuit ☎ 07 86 17 22 82',
   },
   'saint-martin-longueau': {
     slug: 'saint-martin-longueau',
@@ -518,7 +530,10 @@ export const LOCAL_CITIES: Record<string, CityData> = {
     lat: 49.2500,
     lng: 2.4333,
     description: 'Ville de l\'agglomération creilloise dominée par son château médiéval et son passé sidérurgique, Montataire associe un centre ancien, de vastes ensembles d\'habitat collectif (Les Martinets, Le Marais) et des quartiers pavillonnaires accrochés aux coteaux de l\'Oise. Ce parc de logements varié — copropriétés, logements sociaux, maisons individuelles, locaux professionnels et ateliers — appelle des interventions électriques diverses : rénovation et remplacement de tableau électrique vétuste, mise aux normes NF C 15-100, dépannage électrique urgent, installation neuve, éclairage, domotique et borne de recharge. RPLB Électricité intervient à Montataire et dans l\'agglomération creilloise (Creil, Nogent-sur-Oise, Villers-Saint-Paul, Saint-Leu-d\'Esserent) pour les particuliers comme pour les professionnels. Artisan qualifié, intervention rapide, devis gratuit.',
-    priority: 0.9
+    priority: 0.9,
+    meta_title: 'Électricien à Montataire (60) | Tableau & Mise aux Normes | RPLB',
+    meta_description:
+      'RPLB, électricien à Montataire (60160). Rénovation de tableau électrique, mise aux normes NF C 15-100, dépannage. Artisan qualifié — Devis gratuit ☎ 07 86 17 22 82',
   },
   'creil': {
     slug: 'creil',

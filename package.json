@@ -6,13 +6,14 @@
   "scripts": {
     "dev": "vite",
     "sitemap": "node scripts/generate-sitemap.js",
-    "build": "npm run sitemap && tsc -b && vite build",
+    "build": "npm run sitemap && tsc -b && vite build && npm run prerender",
     "lint": "eslint .",
     "preview": "vite preview",
     "db:admin": "node scripts/supabase-admin.js",
     "db:query": "node scripts/supabase-query.js",
     "db:stats": "node scripts/supabase-admin.js stats",
-    "index:google": "node scripts/auto-index-google.js"
+    "index:google": "node scripts/auto-index-google.js",
+    "prerender": "node scripts/prerender.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.78.0",
@@ -31,6 +32,7 @@
     "@vitejs/plugin-react": "^5.0.4",
     "autoprefixer": "^10.4.21",
     "dotenv": "^16.4.5",
+    "esbuild": "^0.25.12",
     "eslint": "^9.36.0",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.22",
