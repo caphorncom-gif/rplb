@@ -19,11 +19,24 @@ Pont-Sainte-Maxence, Crépy-en-Valois, Senlis, Noyon, Creil, Montataire, Nogent-
 Thourotte, Ressons-sur-Matz et les communes environnantes.
 
 ## Services
-- Installation électrique (neuf et rénovation)
-- Dépannage électrique et intervention d'urgence
-- Mise aux normes NF C 15-100
-- Tableau électrique, prises, éclairage
-- Domotique, borne de recharge, alarme et vidéosurveillance
+- [Installation électrique neuve](https://www.rplb-electricite.fr/services/installation-electrique-neuve)
+- [Rénovation électrique](https://www.rplb-electricite.fr/services/renovation-electrique) : mise aux normes NF C 15-100, tableau électrique, prises, éclairage
+- [Dépannage électrique](https://www.rplb-electricite.fr/services/depannage-electrique) : intervention d'urgence
+- [Domotique & maison connectée](https://www.rplb-electricite.fr/services/domotique)
+- [Borne de recharge véhicule électrique](https://www.rplb-electricite.fr/services/borne-recharge-vehicule-electrique)
+- [Alarme & vidéosurveillance](https://www.rplb-electricite.fr/services/alarme-videosurveillance)
+- [Climatisation](https://www.rplb-electricite.fr/services/climatisation)
+
+## Électricien par commune (Oise)
+- [Longueil-Sainte-Marie](https://www.rplb-electricite.fr/electricien/longueil-sainte-marie) — siège
+- [Compiègne](https://www.rplb-electricite.fr/electricien/compiegne)
+- [Creil](https://www.rplb-electricite.fr/electricien/creil)
+- [Senlis](https://www.rplb-electricite.fr/electricien/senlis)
+- [Noyon](https://www.rplb-electricite.fr/electricien/noyon)
+- [Crépy-en-Valois](https://www.rplb-electricite.fr/electricien/crepy-en-valois)
+- [Montataire](https://www.rplb-electricite.fr/electricien/montataire)
+- [Pont-Sainte-Maxence](https://www.rplb-electricite.fr/electricien/pont-sainte-maxence)
+- [Thourotte](https://www.rplb-electricite.fr/electricien/thourotte)
 
 ## Pages principales
 - [Accueil](https://www.rplb-electricite.fr/) : présentation de l'entreprise et des services
@@ -32,6 +45,13 @@ Thourotte, Ressons-sur-Matz et les communes environnantes.
 - [Urgence](https://www.rplb-electricite.fr/urgence) : dépannage électrique rapide
 - [Contact](https://www.rplb-electricite.fr/contact) : demande de devis gratuit
 - [Blog](https://www.rplb-electricite.fr/blog) : conseils et actualités sur l'électricité
+
+## Guides
+- [Rénovation électrique d'une maison ancienne : guide complet](https://www.rplb-electricite.fr/blog/renovation-electrique-maison-ancienne-guide)
+- [Installation électrique : les normes NF C 15-100 à connaître](https://www.rplb-electricite.fr/blog/installation-electrique-normes-nf-c-15-100)
+- [Dépannage électrique urgent : que faire en cas de panne ?](https://www.rplb-electricite.fr/blog/depannage-electrique-urgent-que-faire)
+- [Borne de recharge véhicule électrique : installation et subventions](https://www.rplb-electricite.fr/blog/borne-recharge-vehicule-electrique-installation)
+- [Domotique et maison intelligente : avantages et installation](https://www.rplb-electricite.fr/blog/domotique-maison-intelligente-avantages)
 
 ## À propos
 RPLB Électricité est une entreprise artisanale d'électricité générale. Elle privilégie
