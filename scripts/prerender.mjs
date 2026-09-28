@@ -278,8 +278,9 @@ async function main() {
   const staticPages = [
     {
       path: '/',
-      title: `${SITE_NAME} - Électricien Longueil-Sainte-Marie (60)`,
-      description: DEFAULT_DESCRIPTION,
+      // Aligné sur Home.tsx et index.html (PR #11) : cible « électricien Oise »
+      title: `Électricien dans l'Oise — Compiègne & Senlis | ${SITE_NAME}`,
+      description: `Électricien dans l'Oise : RPLB intervient à Compiègne, Senlis, Noyon, Crépy-en-Valois et alentours. Dépannage, installation, rénovation et mise aux normes électriques. Devis gratuit, artisans certifiés.`,
       h1: `Électricien à Longueil-Sainte-Marie et dans l'Oise`,
       intro: `RPLB Électricité est votre artisan électricien dans l'Oise, basé à Longueil-Sainte-Marie (60126). Installation électrique neuve, rénovation, mise aux normes NF C 15-100, dépannage électrique, domotique, climatisation, alarme et vidéosurveillance, borne de recharge pour véhicule électrique. Certifié Qualifelec et RGE, plus de 25 ans d'expérience, devis gratuit.`,
     },
