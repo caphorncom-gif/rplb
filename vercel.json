@@ -14,6 +14,8 @@
     }
   ],
   "rewrites": [
+    { "source": "/stats/script.js", "destination": "https://umami.srv1147872.hstgr.cloud/script.js" },
+    { "source": "/stats/api/send", "destination": "https://umami.srv1147872.hstgr.cloud/api/send" },
     { "source": "/((?!assets/|.*\\.).*)", "destination": "/index.html" }
   ],
   "headers": [
