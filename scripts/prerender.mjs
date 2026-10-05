@@ -83,6 +83,16 @@ async function loadCities() {
   return mod
 }
 
+// Meta description : coupe au dernier mot entier sous la limite (même règle
+// côté client dans ServiceDetail.tsx, pour que le HTML brut et le rendu JS
+// servent la même description).
+function metaDescription(text, max = 158) {
+  const t = String(text || '').replace(/\s+/g, ' ').trim()
+  if (t.length <= max) return t
+  const cut = t.slice(0, max)
+  return cut.slice(0, cut.lastIndexOf(' ')).replace(/[\s,;:.—-]+$/, '') + '…'
+}
+
 /** Récupère services et articles publiés (optionnel : sans credentials, on saute). */
 async function loadDynamicContent() {
   const url = process.env.VITE_SUPABASE_URL
@@ -456,11 +466,14 @@ ${faqHtml}
   for (const s of services) {
     if (!s.slug) continue
     const title = `${s.title || s.slug} dans l'Oise | ${SITE_NAME}`
-    const description =
-      s.meta_description || s.short_description || `${s.title || s.slug} par RPLB Électricité, artisan électricien dans l'Oise. Devis gratuit.`
+    // Même source que ServiceDetail.tsx (champ `description`, plus riche que
+    // `short_description`) : sinon le JS remplace la description au chargement.
+    const fullText =
+      s.description || s.short_description || `${s.title || s.slug} par RPLB Électricité, artisan électricien dans l'Oise. Devis gratuit.`
+    const description = metaDescription(fullText)
     const bodyHtml = shellLayout(`
 <h1>${esc(s.title || s.slug)}</h1>
-<p>${esc(description)}</p>
+<p>${esc(fullText)}</p>
 <p><a href="/services">Voir tous nos services</a></p>`)
     writePage(
       `/services/${s.slug}`,

@@ -141,8 +141,8 @@ export const Contact = () => {
   return (
     <>
       <SEO
-        title="Contact RPLB Électricité | Devis Gratuit Oise"
-        description="Contactez RPLB Électricité pour un devis gratuit. Services pour particuliers et professionnels. Intervention rapide dans l'Oise. Téléphone, email, formulaire de contact."
+        title="Contact et devis gratuit"
+        description="Contactez RPLB Électricité, électricien à Longueil-Sainte-Marie (60126). Devis gratuit sous 24h. Téléphone 07 86 17 22 82."
         keywords="contact électricien, devis gratuit, électricien Oise, Longueil-Sainte-Marie"
       />
 

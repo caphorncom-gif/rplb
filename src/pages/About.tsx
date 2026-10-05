@@ -7,8 +7,8 @@ export const About = () => {
   return (
     <>
       <SEO
-        title="À Propos - RPLB Électricité | Votre Électricien dans l'Oise"
-        description="Découvrez RPLB Électricité : plus de 25 ans d'expérience, professionnels certifiés. Services pour particuliers et professionnels. Électricien de confiance à Longueil-Sainte-Marie."
+        title="À propos de RPLB Électricité, électricien dans l'Oise"
+        description="RPLB Électricité, artisan électricien à Longueil-Sainte-Marie (60126). Plus de 25 ans d'expérience, certifié Qualifelec et RGE, assurance décennale."
         keywords="à propos, électricien Longueil-Sainte-Marie, histoire RPLB, équipe électricien Oise"
       />
 

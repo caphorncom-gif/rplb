@@ -11,8 +11,8 @@ export const MentionsLegales = () => {
   return (
     <>
       <SEO
-        title="Mentions Légales & RGPD - RPLB Électricité"
-        description="Mentions légales, politique de confidentialité et RGPD de RPLB Électricité. Informations sur la collecte et le traitement des données personnelles."
+        title="Mentions légales"
+        description="Mentions légales du site de RPLB Électricité, électricien à Longueil-Sainte-Marie (60126)."
         keywords="mentions légales, RGPD, confidentialité, protection des données, RPLB Électricité"
       />
 
