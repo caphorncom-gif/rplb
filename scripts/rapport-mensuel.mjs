@@ -9,6 +9,9 @@
  *
  * Données : mêmes accès que gsc-report.mjs / ga4-report.mjs (compte de service).
  *   - GA4 : conversions phone_call + contact_form.
+ *   - Umami (si `umamiWebsiteId` dans le registre) : visiteurs réels sans cookie,
+ *     quand la collecte (démarrée le 29/09/2026) couvre tout le mois. Clé d'API
+ *     en lecture : UMAMI_API_KEY ou ~/.umami-token. Sans clé : bloc omis.
  *   - GSC : clics + impressions du mois vs mois précédent.
  * Topo SEO : lu depuis `rapports/<AAAA-MM>-seo-<client>.md` s'il existe
  *   (rédigé par Claude depuis la loop SEO hebdo). Sinon, placeholder + rappel.
@@ -21,6 +24,7 @@
 import { google } from 'googleapis'
 import { mkdirSync, writeFileSync, readFileSync, existsSync } from 'node:fs'
 import { dirname, join } from 'node:path'
+import { homedir } from 'node:os'
 import { fileURLToPath } from 'node:url'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
@@ -95,6 +99,29 @@ async function gscTotals(siteUrl, start, end) {
   return { clicks: Math.round(row?.clicks || 0), impressions: Math.round(row?.impressions || 0) }
 }
 
+// --- Umami (audience réelle, sans cookie) -----------------------------------
+const UMAMI_URL = process.env.UMAMI_URL || 'https://umami.srv1147872.hstgr.cloud'
+const UMAMI_DEBUT = new Date(Date.UTC(2026, 8, 29)) // mise en place sur le parc
+function umamiKey() {
+  if (process.env.UMAMI_API_KEY) return process.env.UMAMI_API_KEY
+  const f = join(homedir(), '.umami-token')
+  return existsSync(f) ? readFileSync(f, 'utf8').trim() : null
+}
+
+// null si pas d'id, pas de clé, ou mois antérieur au début de la collecte.
+async function umamiTotals(websiteId, start, end) {
+  const key = umamiKey()
+  if (!websiteId || !key || start < UMAMI_DEBUT) return null
+  const q = new URLSearchParams({ startAt: String(start.getTime()), endAt: String(end.getTime() + 86_400_000 - 1) })
+  const res = await fetch(`${UMAMI_URL}/api/websites/${websiteId}/stats?${q}`, {
+    headers: { Authorization: `Bearer ${key}`, Accept: 'application/json' },
+  })
+  if (!res.ok) throw new Error(`Umami HTTP ${res.status}`)
+  const s = await res.json()
+  const v = (x) => Number(typeof x === 'object' && x ? x.value : x) || 0 // Umami 2 {value} / 3 nombre
+  return { visitors: v(s.visitors), pageviews: v(s.pageviews) }
+}
+
 // --- rendu ----------------------------------------------------------------
 const esc = (s) => String(s).replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]))
 const delta = (cur, prev) => {
@@ -117,7 +144,7 @@ function seoBlock(clientId, slug) {
   }
 }
 
-function renderEmail(client, win, calls, gsc, seo) {
+function renderEmail(client, win, calls, gsc, seo, umami) {
   const totalContacts = calls.cur.phone_call + calls.cur.contact_form
   const prevContacts = calls.prev.phone_call + calls.prev.contact_form
   return `<!doctype html><html lang="fr"><body style="margin:0;background:#f7f4ed;font-family:Arial,Helvetica,sans-serif;color:#0a1b2e">
@@ -141,7 +168,14 @@ function renderEmail(client, win, calls, gsc, seo) {
       <p style="margin:0;color:#374151"><strong>${gsc.cur.impressions}</strong> apparitions dans les résultats &nbsp;${delta(gsc.cur.impressions, gsc.prev.impressions)}<br>
       <strong>${gsc.cur.clicks}</strong> visite(s) depuis la recherche &nbsp;${delta(gsc.cur.clicks, gsc.prev.clicks)}</p>
     </div>
-
+${umami?.cur ? `
+    <div style="background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:24px;margin:16px 0">
+      <p style="margin:0 0 6px;font-size:13px;text-transform:uppercase;letter-spacing:1px;color:#b45309">Fréquentation du site</p>
+      <p style="margin:0;color:#374151"><strong>${umami.cur.visitors}</strong> visiteur(s)${umami.prev ? ` &nbsp;${delta(umami.cur.visitors, umami.prev.visitors)}` : ''}<br>
+      <strong>${umami.cur.pageviews}</strong> page(s) consultée(s)${umami.prev ? ` &nbsp;${delta(umami.cur.pageviews, umami.prev.pageviews)}` : ''}</p>
+      ${umami.prev ? '' : '<p style="margin:8px 0 0;font-size:13px;color:#6b7280">Nouveau compteur, plus complet (il compte aussi les visiteurs qui refusent les cookies) : comparaison possible dès le mois prochain.</p>'}
+    </div>
+` : ''}
     <div style="background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:24px;margin:16px 0">
       <p style="margin:0 0 10px;font-size:13px;text-transform:uppercase;letter-spacing:1px;color:#b45309">Ce qu'on a fait pour votre visibilité</p>
       ${seo.html}
@@ -177,7 +211,17 @@ for (const client of targets) {
     const calls = { cur: callsCur, prev: callsPrev }
     const gsc = { cur: gscCur, prev: gscPrev }
     const seo = seoBlock(client.id, win.slug)
-    const html = renderEmail(client, win, calls, gsc, seo)
+    let umami = null
+    try {
+      const [cur, prev] = await Promise.all([
+        umamiTotals(client.umamiWebsiteId, win.start, win.end),
+        umamiTotals(client.umamiWebsiteId, win.prevStart, win.prevEnd),
+      ])
+      umami = { cur, prev }
+    } catch (e) {
+      console.warn(`   ⚠️ Umami ignoré : ${e.message}`)
+    }
+    const html = renderEmail(client, win, calls, gsc, seo, umami)
 
     const file = join(outDir, `${win.slug}-${client.id}.html`)
     writeFileSync(file, html)
@@ -185,6 +229,7 @@ for (const client of targets) {
     const contacts = calls.cur.phone_call + calls.cur.contact_form
     console.log(`✅ ${client.brand} — ${win.label}`)
     console.log(`   ${contacts} demande(s) : ${calls.cur.phone_call} appel(s) + ${calls.cur.contact_form} formulaire(s) · Google : ${gsc.cur.impressions} impr / ${gsc.cur.clicks} clics`)
+    if (umami?.cur) console.log(`   Umami : ${umami.cur.visitors} visiteurs / ${umami.cur.pageviews} pages vues`)
     console.log(`   Brouillon : ${file}${seo.ready ? '' : '  ⚠️ topo SEO à compléter'}`)
   } catch (e) {
     console.error(`❌ ${client.brand} : ${e.message}`)

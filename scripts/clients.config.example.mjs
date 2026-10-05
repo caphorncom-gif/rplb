@@ -14,6 +14,8 @@ export const CLIENTS = [
     ga4PropertyId: '470461392',
     // Search Console : propriété (souvent sc-domain:<domaine>).
     gscDomain: 'sc-domain:rplb-electricite.fr',
+    // Umami : id du site (tableau de bord umami.srv1147872.hstgr.cloud). Optionnel.
+    umamiWebsiteId: '9e450f4a-1045-4e76-bf69-ad2eaa1c47f0',
     siteUrl: 'https://www.rplb-electricite.fr',
     // Destinataire FINAL (client) — envoi manuel après ta validation.
     clientEmail: 'client@example.com',
