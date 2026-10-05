@@ -80,8 +80,8 @@ export const Realisations = () => {
   return (
     <>
       <SEO
-        title="Nos Réalisations - RPLB Électricité Oise"
-        description="Découvrez nos réalisations électriques : installations, rénovations, dépannages pour particuliers et professionnels. Galerie de photos de nos travaux dans l'Oise."
+        title="Nos réalisations d'électricité dans l'Oise"
+        description="Découvrez les chantiers réalisés par RPLB Électricité dans l'Oise : installations neuves, rénovations électriques, mises aux normes, domotique et bornes de recharge."
         keywords="réalisations électricien, travaux électriques, photos, galerie, Oise"
       />
 

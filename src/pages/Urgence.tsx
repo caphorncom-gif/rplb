@@ -36,8 +36,8 @@ export const Urgence = () => {
   return (
     <>
       <SEO
-        title="Urgence Électrique - RPLB Électricité Oise"
-        description="Intervention d'urgence électrique du lundi au vendredi dans l'Oise. Pour particuliers et professionnels. Panne totale, disjoncteur, court-circuit. Intervention rapide en semaine."
+        title="Dépannage électrique urgent dans l'Oise"
+        description="Panne électrique, disjoncteur qui saute, coupure de courant ? RPLB Électricité intervient en urgence dans l'Oise du lundi au vendredi de 8h à 18h."
         keywords="urgence électrique, dépannage électrique urgent, électricien urgence, Oise"
       />
 

@@ -12,9 +12,19 @@ interface Service {
   slug: string
   title: string
   description: string
+  short_description?: string | null
   features: string[] | null
   price_info: string
   image: string | null
+}
+
+// Meta description : coupe au dernier mot entier sous la limite (même règle
+// que scripts/prerender.mjs, pour que le HTML brut et le rendu JS concordent).
+function metaDescription(text: string | null | undefined, max = 158): string {
+  const t = String(text || '').replace(/\s+/g, ' ').trim()
+  if (t.length <= max) return t
+  const cut = t.slice(0, max)
+  return cut.slice(0, cut.lastIndexOf(' ')).replace(/[\s,;:.—-]+$/, '') + '…'
 }
 
 interface Testimonial {
@@ -100,8 +110,8 @@ export const ServiceDetail = () => {
   return (
     <>
       <SEO
-        title={`${service.title} - RPLB Électricité Oise`}
-        description={service.description.substring(0, 160)}
+        title={`${service.title} dans l'Oise`}
+        description={metaDescription(service.description || service.short_description)}
         keywords={`${service.title}, électricien, Oise, Longueil-Sainte-Marie`}
         type="service"
         breadcrumbs={[

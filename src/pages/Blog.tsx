@@ -64,8 +64,8 @@ export const Blog = () => {
   return (
     <>
       <SEO
-        title="Blog & Conseils Électricité - RPLB"
-        description="Conseils, astuces et actualités sur l'électricité, la domotique et la sécurité électrique. Articles pratiques pour particuliers."
+        title="Conseils d'électricien — le blog"
+        description="Conseils pratiques d'un électricien de l'Oise : normes NF C 15-100, rénovation électrique, dépannage, domotique, borne de recharge pour véhicule électrique."
         keywords="blog électricité, conseils électricité, astuces électriques, actualités électricité"
       />
 

@@ -50,8 +50,8 @@ export const Services = () => {
   return (
     <>
       <SEO
-        title="Nos Services Électricité - RPLB | Oise"
-        description="Installation, dépannage, rénovation électrique, domotique, alarme. Services pour particuliers et professionnels. Électricien professionnel à Longueil-Sainte-Marie."
+        title="Nos services d'électricité dans l'Oise"
+        description="Tous les services de RPLB Électricité dans l'Oise : installation électrique neuve, rénovation, dépannage, mise aux normes, domotique, climatisation, alarme et borne de recharge. Devis gratuit."
         keywords="services électricité, installation électrique, dépannage, rénovation, domotique, Oise"
       />
 
