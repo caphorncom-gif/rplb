@@ -21,6 +21,7 @@ Thourotte, Ressons-sur-Matz et les communes environnantes.
 ## Services
 - [Installation électrique neuve](https://www.rplb-electricite.fr/services/installation-electrique-neuve)
 - [Rénovation électrique](https://www.rplb-electricite.fr/services/renovation-electrique) : mise aux normes NF C 15-100, tableau électrique, prises, éclairage
+- [Mise aux normes électrique](https://www.rplb-electricite.fr/mise-aux-normes-electrique) : mise en sécurité et mise en conformité NF C 15-100, diagnostic, différentiels 30 mA, prise de terre
 - [Dépannage électrique](https://www.rplb-electricite.fr/services/depannage-electrique) : intervention d'urgence
 - [Domotique & maison connectée](https://www.rplb-electricite.fr/services/domotique)
 - [Borne de recharge véhicule électrique](https://www.rplb-electricite.fr/services/borne-recharge-vehicule-electrique)

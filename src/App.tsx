@@ -14,6 +14,7 @@ const Realisations = lazy(() => import('./pages/Realisations').then(m => ({ defa
 const About = lazy(() => import('./pages/About').then(m => ({ default: m.About })))
 const Contact = lazy(() => import('./pages/Contact').then(m => ({ default: m.Contact })))
 const Urgence = lazy(() => import('./pages/Urgence').then(m => ({ default: m.Urgence })))
+const MiseAuxNormes = lazy(() => import('./pages/MiseAuxNormes').then(m => ({ default: m.MiseAuxNormes })))
 const Blog = lazy(() => import('./pages/Blog').then(m => ({ default: m.Blog })))
 const ArticleDetail = lazy(() => import('./pages/ArticleDetail').then(m => ({ default: m.ArticleDetail })))
 const MentionsLegales = lazy(() => import('./pages/MentionsLegales').then(m => ({ default: m.MentionsLegales })))
@@ -70,6 +71,11 @@ function App() {
               <Route path="/urgence" element={
                 <Suspense fallback={<LoadingFallback />}>
                   <Urgence />
+                </Suspense>
+              } />
+              <Route path="/mise-aux-normes-electrique" element={
+                <Suspense fallback={<LoadingFallback />}>
+                  <MiseAuxNormes />
                 </Suspense>
               } />
               <Route path="/blog" element={
