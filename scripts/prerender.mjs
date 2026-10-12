@@ -37,7 +37,7 @@ import { build } from 'esbuild'
 import { createClient } from '@supabase/supabase-js'
 import * as dotenv from 'dotenv'
 import { readFileSync, writeFileSync, mkdirSync, existsSync, rmSync } from 'fs'
-import { join, dirname, resolve } from 'path'
+import { join, dirname, resolve, basename } from 'path'
 import { pathToFileURL } from 'url'
 
 dotenv.config()
@@ -64,13 +64,14 @@ const esc = (s) =>
 const escJsonLd = (obj) => JSON.stringify(obj).replace(/</g, '\\u003c')
 
 /**
- * Charge `src/data/localCities.ts` depuis Node en le transpilant à la volée
- * avec esbuild (déjà installé comme dépendance de Vite).
+ * Charge un module de données `src/data/*.ts` depuis Node en le transpilant à
+ * la volée avec esbuild (déjà installé comme dépendance de Vite).
  */
-async function loadCities() {
-  const tmp = join(DIST, '.prerender-cities.mjs')
+async function loadDataModule(entry) {
+  // Un fichier par module : l'import ESM est mis en cache par URL.
+  const tmp = join(DIST, `.prerender-${basename(entry, '.ts')}.mjs`)
   await build({
-    entryPoints: ['src/data/localCities.ts'],
+    entryPoints: [entry],
     bundle: true,
     format: 'esm',
     platform: 'node',
@@ -278,7 +279,8 @@ async function main() {
   }
   const template = readFileSync(templatePath, 'utf8')
 
-  const { LOCAL_CITIES, shouldIndexCity } = await loadCities()
+  const { LOCAL_CITIES, shouldIndexCity } = await loadDataModule('src/data/localCities.ts')
+  const { miseAuxNormes, MISE_AUX_NORMES_PATH } = await loadDataModule('src/data/miseAuxNormes.ts')
   const cities = Object.values(LOCAL_CITIES)
   const indexedCities = cities.filter(shouldIndexCity).sort((a, b) => b.priority - a.priority)
 
@@ -295,6 +297,7 @@ async function main() {
     servicesSorted
       .filter((s) => s.slug !== exceptSlug)
       .map((s) => `<li><a href="/services/${s.slug}">${esc(s.title || s.slug)}</a></li>`)
+      .concat(`<li><a href="${MISE_AUX_NORMES_PATH}">Mise aux normes électrique</a></li>`)
       .join('')
   const servicesBlock = (heading, exceptSlug) => {
     const items = serviceLinks(exceptSlug)
@@ -390,6 +393,71 @@ async function main() {
         noindex: false,
         bodyHtml,
         jsonLd: [organizationSchema()],
+      })
+    )
+    count++
+  }
+
+  // --- Mise aux normes électrique (src/data/miseAuxNormes.ts) ---------------
+  {
+    const m = miseAuxNormes
+    const url = `${SITE}${MISE_AUX_NORMES_PATH}`
+    const sectionsHtml = m.sections
+      .map(
+        (sec) =>
+          `<h2>${esc(sec.heading)}</h2>` +
+          (sec.paragraphs || []).map((p) => `<p>${esc(p)}</p>`).join('') +
+          (sec.items ? `<ul>${sec.items.map((i) => `<li>${esc(i)}</li>`).join('')}</ul>` : '')
+      )
+      .join('\n')
+    const faqHtml = m.faq.map((f) => `<h3>${esc(f.q)}</h3><p>${esc(f.a)}</p>`).join('')
+    const cityLinks = indexedCities
+      .map((c) => `<li><a href="/electricien/${c.slug}">Électricien à ${esc(c.name)}</a></li>`)
+      .join('')
+    const bodyHtml = shellLayout(`
+<h1>${esc(m.h1)}</h1>
+<p>${esc(m.intro)}</p>
+${sectionsHtml}
+<p>Pour aller plus loin : <a href="/blog/installation-electrique-normes-nf-c-15-100">la norme NF C 15-100</a>, <a href="/blog/renovation-electrique-maison-ancienne-guide">la rénovation électrique d'une maison ancienne</a>, <a href="/services/renovation-electrique">notre service de rénovation électrique</a>.</p>
+<h2>Questions fréquentes</h2>
+${faqHtml}
+<h2>Mise aux normes électrique près de chez vous</h2>
+<ul>${cityLinks}</ul>`)
+    writePage(
+      MISE_AUX_NORMES_PATH,
+      renderPage(template, {
+        path: MISE_AUX_NORMES_PATH,
+        title: `${m.title} | ${SITE_NAME}`,
+        description: m.description,
+        noindex: false,
+        bodyHtml,
+        jsonLd: [
+          organizationSchema(),
+          breadcrumbSchema([
+            { name: 'Accueil', url: `${SITE}/` },
+            { name: 'Mise aux normes électrique', url },
+          ]),
+          {
+            '@context': 'https://schema.org',
+            '@type': 'Service',
+            '@id': `${url}#service`,
+            name: 'Mise aux normes électrique',
+            serviceType: 'Mise aux normes électrique',
+            description: m.description,
+            provider: { '@id': `${SITE}#organization` },
+            url,
+            areaServed: { '@type': 'State', name: 'Oise' },
+          },
+          {
+            '@context': 'https://schema.org',
+            '@type': 'FAQPage',
+            mainEntity: m.faq.map((f) => ({
+              '@type': 'Question',
+              name: f.q,
+              acceptedAnswer: { '@type': 'Answer', text: f.a },
+            })),
+          },
+        ],
       })
     )
     count++

@@ -5,6 +5,7 @@ const serviceLinks = [
   { path: '/services/depannage-electrique', label: 'Dépannage électrique' },
   { path: '/services/installation-electrique-neuve', label: 'Installation neuve' },
   { path: '/services/renovation-electrique', label: 'Rénovation' },
+  { path: '/mise-aux-normes-electrique', label: 'Mise aux normes' },
   { path: '/services/domotique', label: 'Domotique' },
   { path: '/services/climatisation', label: 'Climatisation' },
 ]
