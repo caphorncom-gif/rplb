@@ -282,6 +282,31 @@ async function main() {
   const cities = Object.values(LOCAL_CITIES)
   const indexedCities = cities.filter(shouldIndexCity).sort((a, b) => b.priority - a.priority)
 
+  // Services et articles (Supabase) chargés d'abord : leurs liens servent au
+  // maillage de toutes les pages pré-rendues, pas seulement à leurs fiches.
+  const { services, articles } = await loadDynamicContent()
+  const servicesSorted = services
+    .filter((s) => s.slug)
+    .sort((a, b) => (a.order_index ?? 0) - (b.order_index ?? 0))
+  const articlesSorted = articles
+    .filter((a) => a.slug)
+    .sort((a, b) => String(b.published_at || '').localeCompare(String(a.published_at || '')))
+  const serviceLinks = (exceptSlug) =>
+    servicesSorted
+      .filter((s) => s.slug !== exceptSlug)
+      .map((s) => `<li><a href="/services/${s.slug}">${esc(s.title || s.slug)}</a></li>`)
+      .join('')
+  const servicesBlock = (heading, exceptSlug) => {
+    const items = serviceLinks(exceptSlug)
+    return items ? `\n<h2>${esc(heading)}</h2>\n<ul>${items}</ul>` : ''
+  }
+  const articlesBlock = () => {
+    const items = articlesSorted
+      .map((a) => `<li><a href="/blog/${a.slug}">${esc(a.title || a.slug)}</a></li>`)
+      .join('')
+    return items ? `\n<h2>Nos articles</h2>\n<ul>${items}</ul>` : ''
+  }
+
   let count = 0
 
   // --- Pages statiques ------------------------------------------------------
@@ -352,7 +377,7 @@ async function main() {
       .join('')
     const bodyHtml = shellLayout(`
 <h1>${esc(page.h1)}</h1>
-<p>${esc(page.intro)}</p>
+<p>${esc(page.intro)}</p>${page.path === '/blog' ? articlesBlock() : ''}${servicesBlock('Nos services')}
 <h2>Nos zones d'intervention</h2>
 <ul>${links}</ul>`)
 
@@ -413,7 +438,7 @@ async function main() {
 <li>Plus de 25 ans d'expérience en électricité résidentielle et tertiaire.</li>
 </ul>
 <h2>Questions fréquentes — Électricien à ${esc(city.name)}</h2>
-${faqHtml}
+${faqHtml}${servicesBlock(`Nos services à ${city.name}`)}
 <h2>Nous intervenons aussi dans ces communes</h2>
 <ul>${cityLinks}</ul>`)
 
@@ -461,8 +486,6 @@ ${faqHtml}
   }
 
   // --- Services et articles (contenu Supabase) ------------------------------
-  const { services, articles } = await loadDynamicContent()
-
   for (const s of services) {
     if (!s.slug) continue
     const title = `${s.title || s.slug} dans l'Oise | ${SITE_NAME}`
@@ -473,7 +496,7 @@ ${faqHtml}
     const description = metaDescription(fullText)
     const bodyHtml = shellLayout(`
 <h1>${esc(s.title || s.slug)}</h1>
-<p>${esc(fullText)}</p>
+<p>${esc(fullText)}</p>${servicesBlock('Nos autres services', s.slug)}
 <p><a href="/services">Voir tous nos services</a></p>`)
     writePage(
       `/services/${s.slug}`,
