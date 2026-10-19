@@ -303,6 +303,15 @@ async function main() {
     const items = serviceLinks(exceptSlug)
     return items ? `\n<h2>${esc(heading)}</h2>\n<ul>${items}</ul>` : ''
   }
+  // Communes indexables, comme le pied de page React (Footer.tsx) : sans ce
+  // bloc, le HTML brut des fiches services et des articles ne reliait aucune
+  // page /electricien/<ville>.
+  const zonesBlock = (heading) => {
+    const items = indexedCities
+      .map((c) => `<li><a href="/electricien/${c.slug}">Électricien à ${esc(c.name)}</a></li>`)
+      .join('')
+    return items ? `\n<h2>${esc(heading)}</h2>\n<ul>${items}</ul>` : ''
+  }
   const articlesBlock = () => {
     const items = articlesSorted
       .map((a) => `<li><a href="/blog/${a.slug}">${esc(a.title || a.slug)}</a></li>`)
@@ -564,7 +573,7 @@ ${faqHtml}${servicesBlock(`Nos services à ${city.name}`)}
     const description = metaDescription(fullText)
     const bodyHtml = shellLayout(`
 <h1>${esc(s.title || s.slug)}</h1>
-<p>${esc(fullText)}</p>${servicesBlock('Nos autres services', s.slug)}
+<p>${esc(fullText)}</p>${servicesBlock('Nos autres services', s.slug)}${zonesBlock("Nos zones d'intervention")}
 <p><a href="/services">Voir tous nos services</a></p>`)
     writePage(
       `/services/${s.slug}`,
@@ -599,7 +608,7 @@ ${faqHtml}${servicesBlock(`Nos services à ${city.name}`)}
       a.meta_description || a.excerpt || `${a.title || a.slug} — conseils de RPLB Électricité, électricien dans l'Oise.`
     const bodyHtml = shellLayout(`
 <h1>${esc(a.title || a.slug)}</h1>
-<p>${esc(description)}</p>
+<p>${esc(description)}</p>${zonesBlock("Nos zones d'intervention")}
 <p><a href="/blog">Retour au blog</a></p>`)
     writePage(
       `/blog/${a.slug}`,
