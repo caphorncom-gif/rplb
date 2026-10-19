@@ -601,6 +601,9 @@ ${faqHtml}${servicesBlock(`Nos services à ${city.name}`)}
     count++
   }
 
+  // Même rendu markdown que ArticleDetail.tsx.
+  const { renderMarkdown } = await loadDataModule('src/lib/markdown.ts')
+
   for (const a of articles) {
     if (!a.slug) continue
     const title = `${a.title || a.slug} | ${SITE_NAME}`
@@ -608,7 +611,7 @@ ${faqHtml}${servicesBlock(`Nos services à ${city.name}`)}
       a.meta_description || a.excerpt || `${a.title || a.slug} — conseils de RPLB Électricité, électricien dans l'Oise.`
     const bodyHtml = shellLayout(`
 <h1>${esc(a.title || a.slug)}</h1>
-<p>${esc(description)}</p>${zonesBlock("Nos zones d'intervention")}
+${a.content ? renderMarkdown(a.content, { dropLeadingH1: true }) : `<p>${esc(description)}</p>`}${zonesBlock("Nos zones d'intervention")}
 <p><a href="/blog">Retour au blog</a></p>`)
     writePage(
       `/blog/${a.slug}`,

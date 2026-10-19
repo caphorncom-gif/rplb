@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useEffect, useMemo, useState, type MouseEvent } from 'react'
+import { useParams, Link, useNavigate } from 'react-router-dom'
 import { SEO } from '../components/SEO'
 import { OptimizedImage } from '../components/OptimizedImage'
 import { ContactCTA } from '../components/ContactCTA'
 import { supabase } from '../lib/supabase'
+import { renderMarkdown } from '../lib/markdown'
 import { Calendar, User, ArrowLeft } from 'lucide-react'
 
 interface Article {
@@ -24,6 +25,21 @@ export const ArticleDetail = () => {
   const [article, setArticle] = useState<Article | null>(null)
   const [relatedArticles, setRelatedArticles] = useState<Article[]>([])
   const [loading, setLoading] = useState(true)
+  const navigate = useNavigate()
+  // Même rendu que le HTML pré-rendu (scripts/prerender.mjs).
+  const contentHtml = useMemo(
+    () => (article ? renderMarkdown(article.content, { dropLeadingH1: true }) : ''),
+    [article]
+  )
+
+  // Les liens internes du contenu restent dans la SPA (pas de rechargement).
+  const handleContentClick = (e: MouseEvent<HTMLDivElement>) => {
+    const link = (e.target as HTMLElement).closest('a')
+    const href = link?.getAttribute('href')
+    if (!href?.startsWith('/') || e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return
+    e.preventDefault()
+    navigate(href)
+  }
 
   useEffect(() => {
     const fetchArticle = async () => {
@@ -176,11 +192,11 @@ export const ArticleDetail = () => {
           )}
 
           {/* Contenu */}
-          <div className="prose prose-lg max-w-none text-gray-700">
-            <div className="whitespace-pre-line">
-              {article.content}
-            </div>
-          </div>
+          <div
+            className="article-content"
+            onClick={handleContentClick}
+            dangerouslySetInnerHTML={{ __html: contentHtml }}
+          />
 
           {/* Articles similaires */}
           {relatedArticles.length > 0 && (
