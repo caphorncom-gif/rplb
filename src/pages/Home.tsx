@@ -112,7 +112,7 @@ export const Home = () => {
     <>
       <SEO
         title="Électricien dans l'Oise — Compiègne & Senlis"
-        description="Électricien dans l'Oise : RPLB intervient à Compiègne, Senlis, Noyon, Crépy-en-Valois et alentours. Dépannage, installation, rénovation et mise aux normes électriques. Devis gratuit, artisans certifiés."
+        description="Électricien dans l'Oise : RPLB intervient à Compiègne, Senlis, Noyon et alentours. Dépannage, installation, rénovation, mise aux normes. Devis gratuit."
         keywords="électricien Oise, électricien Compiègne, électricien Senlis, dépannage électrique, installation électrique, rénovation électrique, mise aux normes NF C 15-100"
       />
 
