@@ -44,7 +44,7 @@ export const Urgence = () => {
       <div className="bg-gradient-to-r from-red-600 to-red-700 text-white py-16">
         <div className="container mx-auto px-4 text-center">
           <h1 className="text-5xl md:text-6xl font-bold mb-4">
-            URGENCE ÉLECTRIQUE
+            Dépannage électrique urgent dans l'Oise
           </h1>
           <p className="text-2xl mb-8 text-red-100">
             Intervention rapide pour vos urgences électriques - Particuliers et professionnels

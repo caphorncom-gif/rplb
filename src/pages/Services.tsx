@@ -58,7 +58,7 @@ export const Services = () => {
       <div className="bg-gradient-to-r from-primary to-primary-dark text-white py-16">
         <div className="container mx-auto px-4 text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
-            Nos Services Électricité
+            Nos services d'électricité
           </h1>
           <p className="text-xl text-gray-100 max-w-2xl mx-auto">
             Solutions complètes pour tous vos besoins en électricité, de l'installation à la maintenance. Pour particuliers et professionnels.
