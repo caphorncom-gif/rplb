@@ -585,6 +585,12 @@ ${faqHtml}${servicesBlock(`Nos services à ${city.name}`)}
         bodyHtml,
         jsonLd: [
           organizationSchema(),
+          // Miroir du fil d'Ariane émis par ServiceDetail.tsx.
+          breadcrumbSchema([
+            { name: 'Accueil', url: `${SITE}/` },
+            { name: 'Services', url: `${SITE}/services` },
+            { name: s.title || s.slug, url: `${SITE}/services/${s.slug}` },
+          ]),
           {
             '@context': 'https://schema.org',
             '@type': 'Service',
@@ -621,7 +627,36 @@ ${a.content ? renderMarkdown(a.content, { dropLeadingH1: true }) : `<p>${esc(des
         description,
         noindex: false,
         bodyHtml,
-        jsonLd: [organizationSchema()],
+        // Miroir des schémas émis par ArticleDetail.tsx via <SEO type="article">
+        // (BreadcrumbList + Article), absents du HTML brut jusqu'ici.
+        jsonLd: [
+          organizationSchema(),
+          breadcrumbSchema([
+            { name: 'Accueil', url: `${SITE}/` },
+            { name: 'Blog', url: `${SITE}/blog` },
+            { name: a.title || a.slug, url: `${SITE}/blog/${a.slug}` },
+          ]),
+          ...(a.published_at
+            ? [
+                {
+                  '@context': 'https://schema.org',
+                  '@type': 'Article',
+                  headline: a.title || a.slug,
+                  description,
+                  image: a.featured_image || BRAND_IMAGE,
+                  datePublished: a.published_at,
+                  dateModified: a.updated_at || a.published_at,
+                  mainEntityOfPage: `${SITE}/blog/${a.slug}`,
+                  author: { '@type': 'Person', name: a.author || SITE_NAME },
+                  publisher: {
+                    '@type': 'Organization',
+                    name: SITE_NAME,
+                    logo: { '@type': 'ImageObject', url: BRAND_IMAGE },
+                  },
+                },
+              ]
+            : []),
+        ],
       })
     )
     count++

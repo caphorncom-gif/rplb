@@ -441,7 +441,7 @@ export const LOCAL_CITIES: Record<string, CityData> = {
     lng: 2.5833,
     description: 'Cité royale au riche patrimoine, Senlis compte un secteur sauvegardé où le bâti ancien — hôtels particuliers, maisons de pierre du centre historique, abords de la cathédrale Notre-Dame — impose des interventions électriques soignées et respectueuses des contraintes des Bâtiments de France. RPLB Électricité intervient à Senlis pour la rénovation électrique des logements anciens, la mise aux normes NF C 15-100 des installations vétustes, le remplacement de tableaux électriques et la sécurisation des circuits. Dans les quartiers plus récents comme Villevert ou Brichebay, nous réalisons aussi les installations neuves, la domotique, l\'ajout de prises et de points lumineux, ainsi que la pose de bornes de recharge pour véhicule électrique. Dépannage rapide en cas de panne, coupure ou court-circuit : nos électriciens certifiés Qualifelec et RGE se déplacent à Senlis et dans les communes voisines (Chamant, Fleurines, Aumont-en-Halatte) du lundi au vendredi. Devis gratuit et détaillé pour tous vos travaux, du simple dépannage à la rénovation électrique complète.',
     priority: 0.9,
-    meta_title: 'Électricien à Senlis (60) | SARL RPLB Électricité',
+    meta_title: 'Électricien à Senlis (60300) | Dépannage & Rénovation | RPLB',
     meta_description:
       'Électricien à Senlis (60300). Installation, dépannage et rénovation électrique. Artisan qualifié, devis gratuit, intervention sous 48h ☎ 07 86 17 22 82',
   },
@@ -531,7 +531,7 @@ export const LOCAL_CITIES: Record<string, CityData> = {
     lng: 2.4333,
     description: 'Ville de l\'agglomération creilloise dominée par son château médiéval et son passé sidérurgique, Montataire associe un centre ancien, de vastes ensembles d\'habitat collectif (Les Martinets, Le Marais) et des quartiers pavillonnaires accrochés aux coteaux de l\'Oise. Ce parc de logements varié — copropriétés, logements sociaux, maisons individuelles, locaux professionnels et ateliers — appelle des interventions électriques diverses : rénovation et remplacement de tableau électrique vétuste, mise aux normes NF C 15-100, dépannage électrique urgent, installation neuve, éclairage, domotique et borne de recharge. RPLB Électricité intervient à Montataire et dans l\'agglomération creilloise (Creil, Nogent-sur-Oise, Villers-Saint-Paul, Saint-Leu-d\'Esserent) pour les particuliers comme pour les professionnels. Artisan qualifié, intervention rapide, devis gratuit.',
     priority: 0.9,
-    meta_title: 'Électricien à Montataire (60) | Tableau & Mise aux Normes | RPLB',
+    meta_title: 'Électricien à Montataire (60160) | Dépannage & Mise aux normes | RPLB',
     meta_description:
       'RPLB, électricien à Montataire (60160). Rénovation de tableau électrique, mise aux normes NF C 15-100, dépannage. Artisan qualifié — Devis gratuit ☎ 07 86 17 22 82',
   },
