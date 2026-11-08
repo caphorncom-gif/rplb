@@ -29,7 +29,11 @@
  *
  * IMPORTANT : le texte pré-rendu doit rester le MÊME que celui rendu par React
  * (mêmes titres, même contenu). Il est donc dérivé des mêmes sources
- * (`src/data/localCities.ts`) plutôt que réécrit à la main.
+ * (`src/data/localCities.ts`, `src/data/miseAuxNormes.ts`,
+ * `src/data/pagesContent.ts`, tables Supabase) plutôt que réécrit à la main.
+ * L'accueil, /services et /about reprennent toutes leurs sections, l'appel à
+ * l'action et le pied de page : les robots des IA (ChatGPT, Perplexity)
+ * n'exécutent pas le JavaScript et ne lisent que ce HTML.
  *
  * Usage : node scripts/prerender.mjs   (appelé par `npm run build`)
  */
@@ -46,6 +50,12 @@ const DIST = 'dist'
 const SITE = process.env.VITE_SITE_URL || 'https://www.rplb-electricite.fr'
 const SITE_NAME = process.env.VITE_COMPANY_NAME || 'RPLB Électricité'
 const PHONE = process.env.VITE_CONTACT_PHONE || '07 86 17 22 82'
+// Numéro affiché par Hero, ContactCTA et Header (même variable, même repli).
+const URGENCE_PHONE = process.env.VITE_URGENCE_PHONE || '06 XX XX XX XX'
+// Pied de page : même variable, repli dans pagesContent.footerContent.
+const BUSINESS_ADDRESS = process.env.VITE_BUSINESS_ADDRESS
+const BUSINESS_LAT = process.env.VITE_BUSINESS_LAT || '49.2667'
+const BUSINESS_LNG = process.env.VITE_BUSINESS_LNG || '2.8833'
 const BRAND_IMAGE =
   'https://hgcpddzpqzfxrvfipsii.supabase.co/storage/v1/object/public/rplb-media/logo-rplb.png'
 
@@ -195,6 +205,9 @@ function writePage(path, html) {
   writeFileSync(file, html, 'utf8')
 }
 
+/** Lien `tel:` construit comme dans les composants React. */
+const telHref = (phone) => `tel:${String(phone).replace(/\s/g, '')}`
+
 /** Enveloppe de mise en page du contenu pré-rendu (visible avant le montage React). */
 const shellLayout = (inner) => `
 <div style="font-family:Archivo,system-ui,-apple-system,sans-serif;color:#0A1B2E;max-width:960px;margin:0 auto;padding:2rem 1.25rem;line-height:1.6">
@@ -220,7 +233,7 @@ const organizationSchema = () => ({
     addressRegion: 'Hauts-de-France',
     addressCountry: 'FR',
   },
-  geo: { '@type': 'GeoCoordinates', latitude: '49.2667', longitude: '2.8833' },
+  geo: { '@type': 'GeoCoordinates', latitude: BUSINESS_LAT, longitude: BUSINESS_LNG },
   areaServed: [
     { '@type': 'City', name: 'Longueil-Sainte-Marie' },
     { '@type': 'City', name: 'Compiègne' },
@@ -235,7 +248,8 @@ const organizationSchema = () => ({
       closes: '18:00',
     },
   ],
-  sameAs: [],
+  // Même valeur que SEO.tsx : profil Google Business (CID réel).
+  sameAs: ['https://www.google.com/maps?cid=11394334929053269026'],
 })
 
 const breadcrumbSchema = (crumbs) => ({
@@ -272,6 +286,159 @@ const cityFaq = (cityName) => [
   },
 ]
 
+/**
+ * Corps HTML de l'accueil, de /services et de /about : miroir des sections
+ * rendues par Home.tsx, Services.tsx et About.tsx (avec Hero, TrustBadges,
+ * GoogleReviewsCarousel, ContactCTA et Footer), textes lus dans
+ * `src/data/pagesContent.ts` et services/articles dans Supabase.
+ */
+function buildRichBodies({ content, servicesSorted, articlesSorted }) {
+  const {
+    homeHero,
+    homeServices,
+    homeTeam,
+    homeZone,
+    interventionCities,
+    homeBrands,
+    homeArticles,
+    trustItems,
+    reviewsBlock,
+    googleReviews,
+    contactCta,
+    servicesPage,
+    aboutPage,
+    footerContent,
+  } = content
+
+  const ul = (items) => (items.length ? `<ul>${items.map((i) => `<li>${i}</li>`).join('')}</ul>` : '')
+
+  // ServiceCard : titre, description courte, tarif ou « Devis gratuit ».
+  const serviceCards = (list) =>
+    list
+      .map(
+        (s) =>
+          `<h3><a href="/services/${esc(s.slug)}">${esc(s.title)}</a></h3>` +
+          `<p>${esc(s.short_description)}</p>` +
+          `<p>${esc(s.price_info || 'Devis gratuit')}</p>`
+      )
+      .join('\n')
+
+  const trustBlock = () =>
+    ul(trustItems.map((t) => `<strong>${esc(t.name)}</strong> : ${esc(t.description)}`))
+
+  const contactBlock = () => `
+<h2>${esc(contactCta.headingLead)} ${esc(contactCta.headingAccent)}</h2>
+<p>${esc(contactCta.text)}</p>
+<p><a href="${telHref(URGENCE_PHONE)}">${esc(URGENCE_PHONE)}</a> &middot; <a href="/contact">${esc(contactCta.ctaQuote)}</a></p>
+<p>${esc(contactCta.footnote)}</p>`
+
+  const footerBlock = () => {
+    const f = footerContent
+    const address = BUSINESS_ADDRESS || f.defaultAddress
+    return `
+<footer>
+<p><strong>${esc(SITE_NAME)}</strong> — ${esc(f.description)}</p>
+<h2>${esc(f.servicesHeading)}</h2>
+${ul([...f.serviceLinks, ...f.extraLinks].map((l) => `<a href="${esc(l.path)}">${esc(l.label)}</a>`))}
+<h2>${esc(f.zoneHeading)}</h2>
+${ul(f.cityLinks.map((c) => `<a href="/electricien/${esc(c.slug)}">Électricien ${esc(c.name)}</a>`))}
+<h2>${esc(f.contactHeading)}</h2>
+${ul([
+  `${esc(f.phoneNames.contact)} : <a href="${telHref(PHONE)}">${esc(PHONE)}</a>`,
+  `${esc(f.phoneNames.urgence)} : <a href="${telHref(URGENCE_PHONE)}">${esc(URGENCE_PHONE)}</a>`,
+  `<a href="mailto:${esc(f.email)}">${esc(f.email)}</a>`,
+  esc(address),
+])}
+<p><a href="/mentions-legales">${esc(f.legalLink)}</a></p>
+</footer>`
+  }
+
+  // GoogleReviewsCarousel : la note moyenne (5.0 affiché « 5 ») et tous les avis
+  // du carrousel, qui défilent un par un à l'écran.
+  const reviewsHtml = () => `
+<h2>${esc(reviewsBlock.heading)}</h2>
+<p>${esc(String(5.0))} — ${googleReviews.length} avis</p>
+${googleReviews
+  .map(
+    (r) =>
+      `<blockquote><p>"${esc(r.comment)}"</p><p>${esc(r.reviewerName)}${r.date ? ` · ${esc(r.date)}` : ''}${r.visitDate ? ` · ${esc(r.visitDate)}` : ''}</p></blockquote>`
+  )
+  .join('\n')}
+<p>${esc(reviewsBlock.invite)}</p>`
+
+  // Home.tsx : 6 services et 3 derniers articles, comme ses requêtes Supabase.
+  const homeArticlesHtml = () => {
+    const latest = articlesSorted.slice(0, 3)
+    if (!latest.length) return ''
+    return `
+<p>${esc(homeArticles.eyebrow)}</p>
+<h2>${esc(homeArticles.heading)}</h2>
+${latest
+  .map(
+    (a) =>
+      `<h3><a href="/blog/${esc(a.slug)}">${esc(a.title)}</a></h3>` +
+      (a.excerpt ? `<p>${esc(a.excerpt)}</p>` : '') +
+      (a.published_at ? `<p>${esc(new Date(a.published_at).toLocaleDateString('fr-FR'))}</p>` : '')
+  )
+  .join('\n')}
+<p><a href="/blog">${esc(homeArticles.linkAll)}</a></p>`
+  }
+
+  const home = shellLayout(`
+<p>${esc(homeHero.badge)}</p>
+<h1>${esc(homeHero.titleLead)} ${esc(homeHero.titleAccent)}</h1>
+<p>${esc(homeHero.subtitle)}</p>
+<p><a href="${telHref(URGENCE_PHONE)}">${esc(URGENCE_PHONE)}</a> &middot; <a href="/contact">${esc(homeHero.ctaQuote)}</a></p>
+${ul([`<strong>${esc(homeHero.rating)}</strong> ${esc(homeHero.ratingSuffix)}`, ...homeHero.proofs.map(esc)])}
+<p>${esc(homeHero.photoName)}, ${esc(homeHero.photoRole)}</p>
+${trustBlock()}
+<p>${esc(homeServices.eyebrow)}</p>
+<h2>${esc(homeServices.headingLine1)} ${esc(homeServices.headingLine2)}</h2>
+${serviceCards(servicesSorted.slice(0, 6))}
+<p><a href="/services">${esc(homeServices.linkAll)}</a></p>
+<p>${esc(homeTeam.eyebrow)}</p>
+<h2>${esc(homeTeam.heading)}</h2>
+<p>${esc(homeTeam.text)}</p>
+${ul(homeTeam.engagements.map(esc))}
+${reviewsHtml()}
+<p>${esc(homeZone.eyebrow)}</p>
+<h2>${esc(homeZone.heading)}</h2>
+<p>${esc(homeZone.text)}</p>
+${ul(interventionCities.map((c) => `<a href="/electricien/${esc(c.slug)}">${esc(c.name)}</a>`))}
+<p>${esc(homeBrands.heading)}</p>
+${ul(homeBrands.brands.map(esc))}
+${homeArticlesHtml()}
+${contactBlock()}
+${footerBlock()}`)
+
+  const services = shellLayout(`
+<h1>${esc(servicesPage.h1)}</h1>
+<p>${esc(servicesPage.intro)}</p>
+${serviceCards(servicesSorted)}
+${contactBlock()}
+${footerBlock()}`)
+
+  const a = aboutPage
+  const about = shellLayout(`
+<h1>${esc(a.h1)}</h1>
+<p>${esc(a.intro)}</p>
+<h2>${esc(a.historyHeading)}</h2>
+<p>${esc(a.historyFirst.before)}<strong>${esc(a.historyFirst.strong)}</strong>${esc(a.historyFirst.after)}</p>
+${a.history.map((p) => `<p>${esc(p)}</p>`).join('\n')}
+<h2>${esc(a.figuresHeading)}</h2>
+${ul(a.figures.map((f) => `<strong>${esc(f.value)}</strong> ${esc(f.label)}`))}
+<h2>${esc(a.valuesHeading)}</h2>
+${a.values.map((v) => `<h3>${esc(v.title)}</h3><p>${esc(v.text)}</p>`).join('\n')}
+${trustBlock()}
+<h2>${esc(a.zoneHeading)}</h2>
+<p>${esc(a.zoneText)}</p>
+${ul(a.zoneCities.map(esc))}
+${contactBlock()}
+${footerBlock()}`)
+
+  return { '/': home, '/services': services, '/about': about }
+}
+
 async function main() {
   const templatePath = join(DIST, 'index.html')
   if (!existsSync(templatePath)) {
@@ -281,6 +448,7 @@ async function main() {
 
   const { LOCAL_CITIES, shouldIndexCity } = await loadDataModule('src/data/localCities.ts')
   const { miseAuxNormes, MISE_AUX_NORMES_PATH } = await loadDataModule('src/data/miseAuxNormes.ts')
+  const content = await loadDataModule('src/data/pagesContent.ts')
   const cities = Object.values(LOCAL_CITIES)
   const indexedCities = cities.filter(shouldIndexCity).sort((a, b) => b.priority - a.priority)
 
@@ -328,15 +496,11 @@ async function main() {
       // Aligné sur Home.tsx et index.html (PR #11) : cible « électricien Oise »
       title: `Électricien dans l'Oise — Compiègne & Senlis | ${SITE_NAME}`,
       description: `Électricien dans l'Oise : RPLB intervient à Compiègne, Senlis, Noyon et alentours. Dépannage, installation, rénovation, mise aux normes. Devis gratuit.`,
-      h1: `Électricien dans l'Oise, l'électricité dans les règles de l'art`,
-      intro: `RPLB Électricité est votre artisan électricien dans l'Oise, basé à Longueil-Sainte-Marie (60126). Installation électrique neuve, rénovation, mise aux normes NF C 15-100, dépannage électrique, domotique, climatisation, alarme et vidéosurveillance, borne de recharge pour véhicule électrique. Certifié Qualifelec et RGE, plus de 25 ans d'expérience, devis gratuit.`,
     },
     {
       path: '/services',
       title: `Nos services d'électricité dans l'Oise | ${SITE_NAME}`,
       description: `Tous les services de RPLB Électricité dans l'Oise : installation électrique neuve, rénovation, dépannage, mise aux normes, domotique, climatisation, alarme et borne de recharge. Devis gratuit.`,
-      h1: `Nos services d'électricité`,
-      intro: `RPLB Électricité intervient pour les particuliers et les professionnels dans un rayon de 30 km autour de Longueil-Sainte-Marie.`,
     },
     {
       path: '/realisations',
@@ -356,8 +520,6 @@ async function main() {
       path: '/about',
       title: `À propos de RPLB Électricité, électricien dans l'Oise | ${SITE_NAME}`,
       description: `RPLB Électricité, artisan électricien à Longueil-Sainte-Marie (60126). Plus de 25 ans d'expérience, certifié Qualifelec et RGE, assurance décennale.`,
-      h1: 'À propos de RPLB Électricité',
-      intro: `Artisan électricien installé à Longueil-Sainte-Marie, RPLB Électricité accompagne particuliers et professionnels de l'Oise depuis plus de 25 ans.`,
     },
     {
       path: '/contact',
@@ -383,7 +545,25 @@ async function main() {
     },
   ]
 
+  // Accueil, /services et /about : contenu complet, construit plus bas.
+  const richBodies = buildRichBodies({ content, servicesSorted, articlesSorted })
+
   for (const page of staticPages) {
+    if (richBodies[page.path]) {
+      writePage(
+        page.path,
+        renderPage(template, {
+          path: page.path,
+          title: page.title,
+          description: page.description,
+          noindex: false,
+          bodyHtml: richBodies[page.path],
+          jsonLd: [organizationSchema()],
+        })
+      )
+      count++
+      continue
+    }
     const links = indexedCities
       .map((c) => `<li><a href="/electricien/${c.slug}">Électricien à ${esc(c.name)}</a></li>`)
       .join('')

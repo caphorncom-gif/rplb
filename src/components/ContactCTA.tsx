@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { Phone, FileText } from 'lucide-react'
+import { contactCta } from '../data/pagesContent'
 
 export const ContactCTA = () => {
   const phoneNumber = import.meta.env.VITE_URGENCE_PHONE || '06 XX XX XX XX'
@@ -13,11 +14,11 @@ export const ContactCTA = () => {
       />
       <div className="container mx-auto px-4 py-16 lg:py-20 text-center relative text-white">
         <h2 className="text-3xl md:text-5xl font-bold mb-4 text-balance">
-          Un projet ? Une panne ?{' '}
-          <span className="text-accent">Parlons-en.</span>
+          {contactCta.headingLead}{' '}
+          <span className="text-accent">{contactCta.headingAccent}</span>
         </h2>
         <p className="text-lg md:text-xl mb-8 text-white/75 max-w-2xl mx-auto">
-          Appelez-nous ou décrivez votre besoin en 2 minutes : devis gratuit, réponse sous 48 h ouvrées.
+          {contactCta.text}
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
           <a
@@ -32,11 +33,11 @@ export const ContactCTA = () => {
             className="inline-flex items-center gap-3 bg-white text-ink hover:bg-paper px-8 py-4 rounded-full font-semibold text-lg transition-colors shadow-card"
           >
             <FileText className="w-5 h-5" />
-            Devis gratuit en ligne
+            {contactCta.ctaQuote}
           </Link>
         </div>
         <p className="mt-6 text-sm text-white/50">
-          Interventions du lundi au vendredi, 8h–18h · Longueil-Sainte-Marie et 30 km alentour
+          {contactCta.footnote}
         </p>
       </div>
     </section>
