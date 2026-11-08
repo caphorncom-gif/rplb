@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { Phone, FileText, Star, ShieldCheck, Zap } from 'lucide-react'
+import { homeHero } from '../data/pagesContent'
 
 interface HeroProps {
   title?: ReactNode
@@ -18,7 +19,7 @@ export const Hero = ({
       L'électricité <span className="text-accent">dans les règles de l'art</span>, près de chez vous
     </>
   ),
-  subtitle = "Installation, dépannage, rénovation et domotique dans l'Oise — pour particuliers et professionnels. Deux artisans, un travail soigné, un devis gratuit.",
+  subtitle = homeHero.subtitle,
   image = TEAM_PHOTO,
   showBadge = true
 }: HeroProps) => {
@@ -44,7 +45,7 @@ export const Hero = ({
             {showBadge && (
               <div className="inline-flex items-center gap-2 bg-white/10 border border-white/15 text-accent px-4 py-1.5 rounded-full text-sm font-semibold mb-6">
                 <Zap className="w-4 h-4" />
-                Artisans électriciens · plus de 25 ans de métier
+                {homeHero.badge}
               </div>
             )}
 
@@ -70,7 +71,7 @@ export const Hero = ({
                 className="inline-flex items-center justify-center gap-3 border-2 border-white/25 hover:border-white/60 text-white px-8 py-4 rounded-full font-semibold text-lg transition-colors"
               >
                 <FileText className="w-5 h-5" />
-                Demander un devis gratuit
+                {homeHero.ctaQuote}
               </Link>
             </div>
 
@@ -82,15 +83,15 @@ export const Hero = ({
                     <Star key={i} className="w-4 h-4 fill-accent text-accent" />
                   ))}
                 </span>
-                <strong className="text-white">5,0</strong> sur Google
+                <strong className="text-white">{homeHero.rating}</strong> {homeHero.ratingSuffix}
               </span>
               <span className="flex items-center gap-2">
                 <ShieldCheck className="w-4 h-4 text-accent" />
-                Assurance décennale
+                {homeHero.proofs[0]}
               </span>
               <span className="flex items-center gap-2">
                 <Zap className="w-4 h-4 text-accent" />
-                Devis gratuit sous 48 h
+                {homeHero.proofs[1]}
               </span>
             </div>
           </div>
@@ -105,13 +106,13 @@ export const Hero = ({
               />
               <img
                 src={image}
-                alt="Romain Pagnier et Ludovic Bozo, électriciens RPLB dans l'Oise"
+                alt={homeHero.photoAlt}
                 className="relative rounded-2xl w-full object-cover shadow-card-hover"
                 loading="eager"
               />
               <div className="absolute -bottom-5 left-6 bg-white text-ink rounded-xl shadow-card-hover px-5 py-3">
-                <p className="font-display font-bold leading-tight">Romain &amp; Ludovic</p>
-                <p className="text-sm text-gray-600">Fondateurs — RPLB Électricité</p>
+                <p className="font-display font-bold leading-tight">{homeHero.photoName}</p>
+                <p className="text-sm text-gray-600">{homeHero.photoRole}</p>
               </div>
             </div>
           </div>

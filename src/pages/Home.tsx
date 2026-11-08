@@ -10,6 +10,15 @@ import { supabase } from '../lib/supabase'
 import { CheckCircle, MapPin, ArrowRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { getServiceIcon } from '../lib/serviceIcons'
+import {
+  homeHero,
+  homeServices,
+  homeTeam,
+  homeZone,
+  interventionCities,
+  homeBrands,
+  homeArticles,
+} from '../data/pagesContent'
 
 interface Service {
   id: string
@@ -29,32 +38,6 @@ interface Article {
   featured_image: string | null
   published_at: string | null
 }
-
-// Communes mises en avant sur la page d'accueil.
-// Doit rester aligné sur INDEXED_CITY_SLUGS (src/data/localCities.ts) : la home étant
-// la page la plus autoritaire, ses liens internes doivent pointer vers les pages
-// commune INDEXABLES (contenu unique, vrai potentiel de ranking), pas vers des pages
-// noindex. Ordre = par demande de recherche décroissante (source DataForSEO 2026-07).
-const interventionCities = [
-  { slug: 'compiegne', name: 'Compiègne' },
-  { slug: 'creil', name: 'Creil' },
-  { slug: 'senlis', name: 'Senlis' },
-  { slug: 'noyon', name: 'Noyon' },
-  { slug: 'crepy-en-valois', name: 'Crépy-en-Valois' },
-  { slug: 'montataire', name: 'Montataire' },
-  { slug: 'pont-sainte-maxence', name: 'Pont-Sainte-Maxence' },
-  { slug: 'thourotte', name: 'Thourotte' },
-  { slug: 'longueil-sainte-marie', name: 'Longueil-Sainte-Marie' },
-]
-
-const brands = ['Schneider Electric', 'Legrand', 'Hager', 'Somfy', 'Siemens', 'ABB']
-
-const engagements = [
-  'Un devis gratuit et détaillé, sans surprise',
-  'Des installations conformes NF C 15-100, garanties 10 ans',
-  'Un chantier propre, nettoyé au fur et à mesure',
-  'Un point d\'avancement chaque jour sur les chantiers longs',
-]
 
 export const Home = () => {
   const [services, setServices] = useState<Service[]>([])
@@ -119,8 +102,8 @@ export const Home = () => {
       <Hero
         title={
           <>
-            Électricien dans l'Oise,{' '}
-            <span className="text-accent">l'électricité dans les règles de l'art</span>
+            {homeHero.titleLead}{' '}
+            <span className="text-accent">{homeHero.titleAccent}</span>
           </>
         }
       />
@@ -133,18 +116,18 @@ export const Home = () => {
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-12">
             <div>
               <p className="text-secondary-dark font-semibold uppercase tracking-widest text-sm mb-2">
-                Nos services
+                {homeServices.eyebrow}
               </p>
               <h2 className="text-3xl md:text-4xl font-bold text-ink text-balance">
-                Du dépannage à la domotique,
-                <br className="hidden md:block" /> un seul interlocuteur
+                {homeServices.headingLine1}
+                <br className="hidden md:block" /> {homeServices.headingLine2}
               </h2>
             </div>
             <Link
               to="/services"
               className="inline-flex items-center gap-2 text-primary hover:text-secondary-dark font-semibold shrink-0 transition-colors"
             >
-              Voir tous les services
+              {homeServices.linkAll}
               <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
@@ -183,24 +166,22 @@ export const Home = () => {
               />
               <OptimizedImage
                 src="https://hgcpddzpqzfxrvfipsii.supabase.co/storage/v1/object/public/rplb-media/services/pagnier-bozo-photo-web.jpg"
-                alt="Romain Pagnier et Ludovic Bozo, électriciens RPLB Électricité"
+                alt={homeTeam.photoAlt}
                 className="relative w-full h-auto rounded-2xl shadow-card"
               />
             </div>
             <div>
               <p className="text-secondary-dark font-semibold uppercase tracking-widest text-sm mb-2">
-                Qui sommes-nous ?
+                {homeTeam.eyebrow}
               </p>
               <h2 className="text-3xl md:text-4xl font-bold text-ink mb-6 text-balance">
-                Deux artisans, plus de 25 ans de métier
+                {homeTeam.heading}
               </h2>
               <p className="text-gray-600 leading-relaxed mb-8">
-                Romain Pagnier et Ludovic Bozo interviennent dans toute l'Oise pour vos travaux
-                d'électricité, du simple dépannage à la rénovation complète. Une entreprise à taille
-                humaine : ceux qui établissent le devis sont ceux qui font le chantier.
+                {homeTeam.text}
               </p>
               <ul className="space-y-4">
-                {engagements.map((engagement) => (
+                {homeTeam.engagements.map((engagement) => (
                   <li key={engagement} className="flex items-start gap-3">
                     <CheckCircle className="w-5 h-5 text-secondary-dark mt-0.5 shrink-0" />
                     <span className="text-gray-700">{engagement}</span>
@@ -220,15 +201,13 @@ export const Home = () => {
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center">
             <p className="text-secondary-dark font-semibold uppercase tracking-widest text-sm mb-2">
-              Zone d'intervention
+              {homeZone.eyebrow}
             </p>
             <h2 className="text-3xl md:text-4xl font-bold text-ink mb-4 text-balance">
-              Votre électricien dans l'Oise, à moins de 30 minutes de chez vous
+              {homeZone.heading}
             </h2>
             <p className="text-lg text-gray-600 mb-10">
-              Basés à Longueil-Sainte-Marie, nous intervenons dans un rayon de 30 km : Compiègne,
-              Creil, Senlis, Noyon, Crépy-en-Valois, Pont-Sainte-Maxence et toutes les communes
-              alentour de l'Oise.
+              {homeZone.text}
             </p>
             <div className="flex flex-wrap justify-center gap-3">
               {interventionCities.map((city) => (
@@ -250,10 +229,10 @@ export const Home = () => {
       <section className="py-10 bg-paper border-y border-ink/5">
         <div className="container mx-auto px-4">
           <p className="text-center text-sm text-gray-500 uppercase tracking-widest mb-6">
-            Nous installons du matériel de grandes marques
+            {homeBrands.heading}
           </p>
           <div className="flex flex-wrap justify-center items-center gap-x-10 gap-y-3">
-            {brands.map((brand) => (
+            {homeBrands.brands.map((brand) => (
               <span key={brand} className="font-display font-bold text-lg text-ink/40">
                 {brand}
               </span>
@@ -269,15 +248,15 @@ export const Home = () => {
             <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-12">
               <div>
                 <p className="text-secondary-dark font-semibold uppercase tracking-widest text-sm mb-2">
-                  Conseils &amp; actualités
+                  {homeArticles.eyebrow}
                 </p>
-                <h2 className="text-3xl md:text-4xl font-bold text-ink">Nos derniers articles</h2>
+                <h2 className="text-3xl md:text-4xl font-bold text-ink">{homeArticles.heading}</h2>
               </div>
               <Link
                 to="/blog"
                 className="inline-flex items-center gap-2 text-primary hover:text-secondary-dark font-semibold shrink-0 transition-colors"
               >
-                Voir tous les articles
+                {homeArticles.linkAll}
                 <ArrowRight className="w-4 h-4" />
               </Link>
             </div>

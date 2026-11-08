@@ -1,95 +1,12 @@
 import { useState, useEffect } from 'react'
 import { Star, ChevronLeft, ChevronRight, ExternalLink } from 'lucide-react'
-
-interface GoogleReview {
-  id: string
-  reviewerName: string
-  rating: number
-  comment: string
-  date?: string
-  visitDate?: string
-}
+import { googleReviews, reviewsBlock } from '../data/pagesContent'
 
 interface GoogleReviewsCarouselProps {
   googleReviewsUrl?: string
   averageRating?: number
   totalReviews?: number
 }
-
-const googleReviews: GoogleReview[] = [
-  {
-    id: '0',
-    reviewerName: 'Martine',
-    rating: 5,
-    comment: 'Excellentes prestations ! Dépannage rapide et efficace. Tarif raisonnable. Électricien à recommander. Martine de Verberie',
-    date: 'il y a 6 mois',
-    visitDate: 'Visité en décembre 2025'
-  },
-  {
-    id: '1',
-    reviewerName: 'Severine Leclercq',
-    rating: 5,
-    comment: 'Merci romain et ludo. Travail très professionnel pour ma cuisine et mon tableau électrique refait à neuf. Je recommande fortement travail très bien, propre et professionnel. Vous pouvez y aller les yeux fermés',
-    date: 'il y a un an',
-    visitDate: 'Visité en juillet 2024'
-  },
-  {
-    id: '2',
-    reviewerName: 'Marie-Christelle Chagot',
-    rating: 5,
-    comment: 'Entreprise sérieuse et très réactive à laquelle je fais appel sans hésiter régulièrement depuis l\'achat de mon appartement en 2020.',
-    date: 'il y a un an',
-    visitDate: 'Visité en novembre 2024'
-  },
-  {
-    id: '3',
-    reviewerName: 'Pierre AUBERT',
-    rating: 5,
-    comment: 'Merci Romain et Ludovic pour votre réactivité et votre professionnalisme. Intervention de qualité. Vous pouvez y aller les yeux fermés.',
-    date: 'il y a 2 ans',
-    visitDate: 'Visité en janvier 2024'
-  },
-  {
-    id: '4',
-    reviewerName: 'ANGELE POCTHIER',
-    rating: 5,
-    comment: 'Rénovation totale de l\'électricité. Travail très professionnel et donne de très bons conseils, nettoyage du chantier au fur et à mesure. Information chaque jour de l\'avancement des travaux. Rien à redire. Personnes très consciencieuses.',
-    date: 'il y a 3 ans',
-    visitDate: 'Visité en juin 2023'
-  },
-  {
-    id: '5',
-    reviewerName: 'Constance BARBIER',
-    rating: 5,
-    comment: 'Beaucoup de sérieux. De très bon conseils, très polis :) je les recommande à 100%',
-    date: 'il y a 4 ans',
-    visitDate: 'Visité en avril 2021'
-  },
-  {
-    id: '6',
-    reviewerName: 'Sandra Elisange',
-    rating: 5,
-    comment: 'Société sérieuse, de très bons conseils. Je recommande à 100%. Service au top !',
-    date: 'il y a 4 ans',
-    visitDate: 'Visité en janvier 2021'
-  },
-  {
-    id: '7',
-    reviewerName: 'Daniel Boivent',
-    rating: 5,
-    comment: 'Artisans sérieux et compétents, je les recommande très vivement.',
-    date: 'il y a 4 ans',
-    visitDate: 'Visité en juin 2021'
-  },
-  {
-    id: '8',
-    reviewerName: 'Ingrid 23',
-    rating: 5,
-    comment: 'Beaucoup de sérieux, très réactif, de bons conseils, je recommande vivement.',
-    date: 'il y a 4 ans',
-    visitDate: 'Visité en février 2021'
-  }
-]
 
 export const GoogleReviewsCarousel = ({
   googleReviewsUrl = 'https://www.google.com/search?sa=X&sca_esv=7a941e0d451f7f12&hl=fr-FR&tbm=lcl&q=RPLB+Avis&rflfq=1&num=20&stick=H4sIAAAAAAAAAONgkxIxNDS2NDE2NrE0sjQwNTYyszQwMtvAyPiKkTMowMdJwbEss3gRK4INAOA0f1QzAAAA&rldimm=11394334929053269026&ved=2ahUKEwiLyurDgdeQAxV2VqQEHRigAucQ9fQKegQIQxAF&biw=1722&bih=913&dpr=2#lkt=LocalPoiReviews',
@@ -144,7 +61,7 @@ export const GoogleReviewsCarousel = ({
                 <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
               </svg>
               <h2 className="text-3xl font-bold text-gray-900">
-                Nos Avis Google
+                {reviewsBlock.heading}
               </h2>
             </div>
             
@@ -173,7 +90,7 @@ export const GoogleReviewsCarousel = ({
               rel="noopener noreferrer"
               className="inline-flex items-center space-x-2 text-primary hover:text-primary-dark font-medium"
             >
-              <span>Voir tous nos avis sur Google</span>
+              <span>{reviewsBlock.linkAll}</span>
               <ExternalLink className="w-4 h-4" />
             </a>
           </div>
@@ -266,7 +183,7 @@ export const GoogleReviewsCarousel = ({
           {/* Lien pour laisser un avis */}
           <div className="mt-8 text-center">
             <p className="text-sm text-gray-600 mb-4">
-              Vous avez fait appel à nos services ? Laissez-nous un avis !
+              {reviewsBlock.invite}
             </p>
             <a
               href={googleReviewsUrl}
@@ -274,7 +191,7 @@ export const GoogleReviewsCarousel = ({
               rel="noopener noreferrer"
               className="inline-flex items-center space-x-2 bg-primary hover:bg-primary-dark text-white px-6 py-3 rounded-lg font-semibold transition-colors shadow-md hover:shadow-lg"
             >
-              <span>Laisser un avis sur Google</span>
+              <span>{reviewsBlock.linkLeave}</span>
               <ExternalLink className="w-5 h-5" />
             </a>
           </div>

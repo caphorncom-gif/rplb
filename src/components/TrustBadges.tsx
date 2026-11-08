@@ -1,5 +1,6 @@
 import { ShieldCheck, FileCheck, PlugZap, MapPin } from 'lucide-react'
 import type { ComponentType } from 'react'
+import { trustItems } from '../data/pagesContent'
 
 interface TrustItem {
   name: string
@@ -7,28 +8,12 @@ interface TrustItem {
   icon: ComponentType<{ className?: string }>
 }
 
-const defaultItems: TrustItem[] = [
-  {
-    name: 'Assurance décennale',
-    description: 'Travaux garantis 10 ans',
-    icon: ShieldCheck,
-  },
-  {
-    name: 'Devis gratuit',
-    description: 'Réponse sous 48 h ouvrées',
-    icon: FileCheck,
-  },
-  {
-    name: 'Normes NF C 15-100',
-    description: 'Installations conformes',
-    icon: PlugZap,
-  },
-  {
-    name: 'Artisans locaux',
-    description: 'Basés à Longueil-Sainte-Marie',
-    icon: MapPin,
-  },
-]
+// Textes dans src/data/pagesContent.ts (partagés avec le pré-rendu), icônes ici.
+const trustIcons = [ShieldCheck, FileCheck, PlugZap, MapPin]
+const defaultItems: TrustItem[] = trustItems.map((item, i) => ({
+  ...item,
+  icon: trustIcons[i] ?? ShieldCheck,
+}))
 
 interface TrustBadgesProps {
   items?: TrustItem[]
