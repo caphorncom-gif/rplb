@@ -21,6 +21,16 @@
       "source": "/avantagesdeladomotique",
       "destination": "/blog/domotique-maison-intelligente-avantages",
       "permanent": true
+    },
+    {
+      "source": "/videosureveillance/",
+      "destination": "/services/alarme-videosurveillance",
+      "permanent": true
+    },
+    {
+      "source": "/avantagesdeladomotique/",
+      "destination": "/blog/domotique-maison-intelligente-avantages",
+      "permanent": true
     }
   ],
   "rewrites": [
