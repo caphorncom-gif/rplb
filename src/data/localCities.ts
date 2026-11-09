@@ -544,9 +544,9 @@ export const LOCAL_CITIES: Record<string, CityData> = {
     lng: 2.4833,
     description: 'Ville la plus peuplée de l\'agglomération creilloise (ACSO), Creil se caractérise par un habitat dense — immeubles collectifs, copropriétés, maisons de ville des quartiers Rouher, Gournay-les-Usines et du centre-ville proche de la gare. RPLB Électricité y répond à des besoins variés : dépannage électrique rapide, mise en sécurité et mise aux normes NF C 15-100 des installations anciennes, rénovation de tableaux électriques dans les appartements et copropriétés, remplacement de circuits vétustes et recherche de pannes. Pour les projets neufs ou les rénovations lourdes, nous assurons l\'installation électrique complète, la domotique, l\'éclairage, l\'ajout de prises et la pose de bornes de recharge pour véhicule électrique. Nos électriciens certifiés Qualifelec et RGE interviennent à Creil et dans les communes voisines (Nogent-sur-Oise, Montataire, Villers-Saint-Paul, Saint-Leu-d\'Esserent) du lundi au vendredi. Assurance décennale, travaux conformes aux normes en vigueur et devis gratuit pour particuliers comme pour professionnels.',
     priority: 0.8,
-    meta_title: 'Électricien à Creil (60) | Installation & Dépannage | RPLB',
+    meta_title: 'Électricien à Creil (60100) | Dépannage & Rénovation de tableau | RPLB',
     meta_description:
-      'Votre électricien à Creil (60100). Mise aux normes, tableau électrique, domotique. SARL RPLB — Artisan certifié Oise ☎ 07 86 17 22 82',
+      'RPLB, électricien à Creil (60100). Dépannage électrique, mise aux normes NF C 15-100, rénovation de tableau, domotique. Artisan qualifié — Devis gratuit ☎ 07 86 17 22 82',
   },
   'nogent-sur-oise': {
     slug: 'nogent-sur-oise',
