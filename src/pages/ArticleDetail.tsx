@@ -5,6 +5,7 @@ import { OptimizedImage } from '../components/OptimizedImage'
 import { ContactCTA } from '../components/ContactCTA'
 import { supabase } from '../lib/supabase'
 import { renderMarkdown } from '../lib/markdown'
+import { NotFound } from './NotFound'
 import { Calendar, User, ArrowLeft } from 'lucide-react'
 
 interface Article {
@@ -25,6 +26,9 @@ export const ArticleDetail = () => {
   const [article, setArticle] = useState<Article | null>(null)
   const [relatedArticles, setRelatedArticles] = useState<Article[]>([])
   const [loading, setLoading] = useState(true)
+  // Erreur de chargement (réseau, Supabase) : à ne pas confondre avec un
+  // article qui n'existe pas, seul cas où l'on affiche la page 404 (noindex).
+  const [loadError, setLoadError] = useState(false)
   const navigate = useNavigate()
   // Même rendu que le HTML pré-rendu (scripts/prerender.mjs).
   const contentHtml = useMemo(
@@ -45,6 +49,7 @@ export const ArticleDetail = () => {
     const fetchArticle = async () => {
       if (!slug || !supabase) return
 
+      setLoadError(false)
       try {
         // Charger l'article
         const { data: articleData, error: articleError } = await supabase
@@ -52,7 +57,7 @@ export const ArticleDetail = () => {
           .select('*')
           .eq('slug', slug)
           .eq('is_published', true)
-          .single()
+          .maybeSingle()
 
         if (articleError) throw articleError
 
@@ -77,6 +82,7 @@ export const ArticleDetail = () => {
         }
       } catch (error) {
         console.error('Erreur chargement article:', error)
+        setLoadError(true)
       } finally {
         setLoading(false)
       }
@@ -93,17 +99,22 @@ export const ArticleDetail = () => {
     )
   }
 
-  if (!article) {
+  if (!article && loadError) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">Article non trouvé</h1>
+          <h1 className="text-2xl font-bold mb-4">Article momentanément indisponible</h1>
+          <p className="text-gray-600 mb-4">Rechargez la page dans un instant.</p>
           <Link to="/blog" className="text-primary hover:underline">
             Retour au blog
           </Link>
         </div>
       </div>
     )
+  }
+
+  if (!article) {
+    return <NotFound />
   }
 
   return (

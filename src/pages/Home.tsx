@@ -165,7 +165,7 @@ export const Home = () => {
                 aria-hidden="true"
               />
               <OptimizedImage
-                src="https://hgcpddzpqzfxrvfipsii.supabase.co/storage/v1/object/public/rplb-media/services/pagnier-bozo-photo-web.jpg"
+                src={homeHero.photoUrl}
                 alt={homeTeam.photoAlt}
                 className="relative w-full h-auto rounded-2xl shadow-card"
               />

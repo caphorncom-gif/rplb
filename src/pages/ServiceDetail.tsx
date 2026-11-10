@@ -6,6 +6,10 @@ import { ContactCTA } from '../components/ContactCTA'
 import { TestimonialCard } from '../components/TestimonialCard'
 import { supabase } from '../lib/supabase'
 import { CheckCircle } from 'lucide-react'
+import { NotFound } from './NotFound'
+import { getServiceContent, serviceDetailLabels, servicePriceLabel } from '../data/servicesContent'
+
+const SITE = 'https://www.rplb-electricite.fr'
 
 interface Service {
   id: string
@@ -42,11 +46,15 @@ export const ServiceDetail = () => {
   const [service, setService] = useState<Service | null>(null)
   const [testimonials, setTestimonials] = useState<Testimonial[]>([])
   const [loading, setLoading] = useState(true)
+  // Erreur de chargement (réseau, Supabase) : à ne pas confondre avec un
+  // service qui n'existe pas, seul cas où l'on affiche la page 404 (noindex).
+  const [loadError, setLoadError] = useState(false)
 
   useEffect(() => {
     const fetchService = async () => {
       if (!slug || !supabase) return
 
+      setLoadError(false)
       try {
         // Charger le service
         const { data: serviceData, error: serviceError } = await supabase
@@ -54,7 +62,7 @@ export const ServiceDetail = () => {
           .select('*')
           .eq('slug', slug)
           .eq('is_active', true)
-          .single()
+          .maybeSingle()
 
         if (serviceError) throw serviceError
 
@@ -76,6 +84,7 @@ export const ServiceDetail = () => {
         }
       } catch (error) {
         console.error('Erreur chargement service:', error)
+        setLoadError(true)
       } finally {
         setLoading(false)
       }
@@ -92,11 +101,12 @@ export const ServiceDetail = () => {
     )
   }
 
-  if (!service) {
+  if (!service && loadError) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">Service non trouvé</h1>
+          <h1 className="text-2xl font-bold mb-4">Service momentanément indisponible</h1>
+          <p className="text-gray-600 mb-4">Rechargez la page dans un instant.</p>
           <Link to="/services" className="text-primary hover:underline">
             Retour aux services
           </Link>
@@ -105,19 +115,28 @@ export const ServiceDetail = () => {
     )
   }
 
+  if (!service) {
+    return <NotFound />
+  }
+
   const features = service.features || []
+  // Sections, FAQ et liens propres au service : même source que le HTML
+  // pré-rendu (src/data/servicesContent.ts).
+  const { sections, faq, links } = getServiceContent(service.slug)
+  const pageUrl = `${SITE}/services/${service.slug}`
+  const pageDescription = metaDescription(service.description || service.short_description)
 
   return (
     <>
       <SEO
         title={`${service.title} dans l'Oise`}
-        description={metaDescription(service.description || service.short_description)}
+        description={pageDescription}
         keywords={`${service.title}, électricien, Oise, Longueil-Sainte-Marie`}
         type="service"
         breadcrumbs={[
-          { name: 'Accueil', url: 'https://www.rplb-electricite.fr/' },
-          { name: 'Services', url: 'https://www.rplb-electricite.fr/services' },
-          { name: service.title, url: `https://www.rplb-electricite.fr/services/${service.slug}` }
+          { name: 'Accueil', url: `${SITE}/` },
+          { name: 'Services', url: `${SITE}/services` },
+          { name: service.title, url: pageUrl }
         ]}
       />
 
@@ -125,9 +144,9 @@ export const ServiceDetail = () => {
       <div className="bg-gradient-to-r from-primary to-primary-dark text-white py-16">
         <div className="container mx-auto px-4">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">{service.title}</h1>
-          <p className="text-lg text-gray-100 mb-2">Service pour particuliers et professionnels</p>
+          <p className="text-lg text-gray-100 mb-2">{serviceDetailLabels.subtitle}</p>
           {service.price_info && (
-            <p className="text-xl text-gray-100">À partir de {service.price_info}</p>
+            <p className="text-xl text-gray-100">{servicePriceLabel(service.price_info)}</p>
           )}
         </div>
       </div>
@@ -153,11 +172,33 @@ export const ServiceDetail = () => {
             </p>
           </div>
 
+          {/* Sections éditoriales (src/data/servicesContent.ts) */}
+          {sections.map((section) => (
+            <div key={section.heading} className="mb-10">
+              <h2 className="text-2xl font-bold mb-4 text-gray-900">{section.heading}</h2>
+              {section.paragraphs?.map((p) => (
+                <p key={p} className="text-lg text-gray-700 leading-relaxed mb-4">
+                  {p}
+                </p>
+              ))}
+              {section.items && (
+                <ul className="space-y-3">
+                  {section.items.map((item) => (
+                    <li key={item} className="flex items-start gap-3 text-lg text-gray-700">
+                      <CheckCircle className="w-6 h-6 text-primary flex-shrink-0 mt-0.5" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          ))}
+
           {/* Liste des prestations */}
           {features.length > 0 && (
             <div className="mb-12">
               <h2 className="text-2xl font-bold mb-6 text-gray-900">
-                Nos Prestations
+                {serviceDetailLabels.featuresHeading}
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {features.map((feature, index) => (
@@ -170,36 +211,36 @@ export const ServiceDetail = () => {
             </div>
           )}
 
-          {/* FAQ */}
+          {/* Liens internes */}
+          {links && links.length > 0 && (
+            <div className="mb-12">
+              <h2 className="text-2xl font-bold mb-4 text-gray-900">
+                {serviceDetailLabels.linksHeading}
+              </h2>
+              <ul className="space-y-2">
+                {links.map((l) => (
+                  <li key={l.path}>
+                    <Link to={l.path} className="text-primary font-semibold hover:underline">
+                      {l.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {/* FAQ propre au service */}
           <div className="mb-12">
             <h2 className="text-2xl font-bold mb-6 text-gray-900">
-              Questions Fréquentes
+              {serviceDetailLabels.faqHeading}
             </h2>
             <div className="space-y-4">
-              <div className="bg-gray-50 p-6 rounded-lg">
-                <h3 className="font-semibold text-gray-900 mb-2">
-                  Quel est le délai d'intervention ?
-                </h3>
-                <p className="text-gray-600">
-                  Pour les urgences, nous intervenons sous 2 heures. Pour les projets, nous planifions un rendez-vous dans les 48h.
-                </p>
-              </div>
-              <div className="bg-gray-50 p-6 rounded-lg">
-                <h3 className="font-semibold text-gray-900 mb-2">
-                  Le devis est-il gratuit ?
-                </h3>
-                <p className="text-gray-600">
-                  Oui, tous nos devis sont gratuits et sans engagement.
-                </p>
-              </div>
-              <div className="bg-gray-50 p-6 rounded-lg">
-                <h3 className="font-semibold text-gray-900 mb-2">
-                  Quels sont vos horaires d'intervention ?
-                </h3>
-                <p className="text-gray-600">
-                  Nous intervenons du lundi au vendredi de 8h à 18h. Le samedi matin de 9h à 12h pour les projets planifiés.
-                </p>
-              </div>
+              {faq.map((f) => (
+                <div key={f.q} className="bg-gray-50 p-6 rounded-lg">
+                  <h3 className="font-semibold text-gray-900 mb-2">{f.q}</h3>
+                  <p className="text-gray-600">{f.a}</p>
+                </div>
+              ))}
             </div>
           </div>
 
@@ -228,20 +269,52 @@ export const ServiceDetail = () => {
           {/* Formulaire contact rapide */}
           <div className="bg-primary/10 p-8 rounded-lg text-center">
             <h2 className="text-2xl font-bold mb-4 text-gray-900">
-              Intéressé par ce service ?
+              {serviceDetailLabels.ctaHeading}
             </h2>
             <p className="text-gray-700 mb-6">
-              Demandez un devis gratuit et sans engagement
+              {serviceDetailLabels.ctaText}
             </p>
             <Link
               to="/contact"
               className="inline-block bg-primary hover:bg-primary-dark text-white px-8 py-3 rounded-lg font-semibold transition-colors"
             >
-              Demander un devis
+              {serviceDetailLabels.ctaButton}
             </Link>
           </div>
         </div>
       </section>
+
+      {/* Service et FAQPage : mêmes schémas que dans le HTML pré-rendu. Le
+          prestataire est l'établissement unique #organization (émis par <SEO />). */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'Service',
+            '@id': `${pageUrl}#service`,
+            name: service.title,
+            description: pageDescription,
+            provider: { '@id': `${SITE}#organization` },
+            url: pageUrl,
+            areaServed: { '@type': 'State', name: 'Oise' },
+          }),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'FAQPage',
+            mainEntity: faq.map((f) => ({
+              '@type': 'Question',
+              name: f.q,
+              acceptedAnswer: { '@type': 'Answer', text: f.a },
+            })),
+          }),
+        }}
+      />
 
       <ContactCTA />
     </>
