@@ -19,6 +19,7 @@ const Blog = lazy(() => import('./pages/Blog').then(m => ({ default: m.Blog })))
 const ArticleDetail = lazy(() => import('./pages/ArticleDetail').then(m => ({ default: m.ArticleDetail })))
 const MentionsLegales = lazy(() => import('./pages/MentionsLegales').then(m => ({ default: m.MentionsLegales })))
 const LocalLanding = lazy(() => import('./pages/LocalLanding').then(m => ({ default: m.LocalLanding })))
+const NotFound = lazy(() => import('./pages/NotFound').then(m => ({ default: m.NotFound })))
 
 // Composant de chargement
 const LoadingFallback = () => (
@@ -100,13 +101,9 @@ function App() {
                 </Suspense>
               } />
               <Route path="*" element={
-                <div className="min-h-screen flex items-center justify-center">
-                  <div className="text-center">
-                    <h1 className="text-4xl font-bold mb-4">404</h1>
-                    <p className="text-gray-600 mb-4">Page non trouvée</p>
-                    <a href="/" className="text-primary hover:underline">Retour à l'accueil</a>
-                  </div>
-                </div>
+                <Suspense fallback={<LoadingFallback />}>
+                  <NotFound />
+                </Suspense>
               } />
             </Routes>
           </main>

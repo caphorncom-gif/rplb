@@ -7,6 +7,7 @@ import { supabase } from '../lib/supabase'
 import { MapPin, Phone, Clock, CheckCircle } from 'lucide-react'
 import { getServiceIcon } from '../lib/serviceIcons'
 import { getCityBySlug, getAllCities, shouldIndexCity } from '../data/localCities'
+import { NotFound } from './NotFound'
 
 interface Service {
   id: string
@@ -56,16 +57,7 @@ export const LocalLanding = () => {
   }, [])
 
   if (!cityData) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">Commune non trouvée</h1>
-          <Link to="/" className="text-primary hover:underline">
-            Retour à l'accueil
-          </Link>
-        </div>
-      </div>
-    )
+    return <NotFound />
   }
 
   const getIcon = getServiceIcon

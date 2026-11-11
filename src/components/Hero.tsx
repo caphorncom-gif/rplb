@@ -10,8 +10,7 @@ interface HeroProps {
   showBadge?: boolean
 }
 
-const TEAM_PHOTO =
-  'https://hgcpddzpqzfxrvfipsii.supabase.co/storage/v1/object/public/rplb-media/services/pagnier-bozo-photo-web.jpg'
+const TEAM_PHOTO = homeHero.photoUrl
 
 export const Hero = ({
   title = (

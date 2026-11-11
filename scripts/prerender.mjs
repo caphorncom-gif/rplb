@@ -30,23 +30,34 @@
  * IMPORTANT : le texte pré-rendu doit rester le MÊME que celui rendu par React
  * (mêmes titres, même contenu). Il est donc dérivé des mêmes sources
  * (`src/data/localCities.ts`, `src/data/miseAuxNormes.ts`,
- * `src/data/pagesContent.ts`, tables Supabase) plutôt que réécrit à la main.
+ * `src/data/pagesContent.ts`, `src/data/servicesContent.ts`, tables Supabase)
+ * plutôt que réécrit à la main.
  * L'accueil, /services et /about reprennent toutes leurs sections, l'appel à
  * l'action et le pied de page : les robots des IA (ChatGPT, Perplexity)
  * n'exécutent pas le JavaScript et ne lisent que ce HTML.
+ *
+ * VRAIE 404
+ * `vercel.json` ne réécrit plus toutes les URL vers index.html : une adresse
+ * sans fichier dans `dist/` reçoit `dist/404.html` (écrit ici) avec le statut
+ * 404. Toute route réelle doit donc avoir son fichier pré-rendu. En production
+ * (`VERCEL_ENV=production`), le script échoue si Supabase ne répond pas ou si
+ * une URL du sitemap ou un lien interne ne correspond à aucun fichier : Vercel
+ * garde alors le déploiement précédent au lieu de publier des pages en 404.
  *
  * Usage : node scripts/prerender.mjs   (appelé par `npm run build`)
  */
 import { build } from 'esbuild'
 import { createClient } from '@supabase/supabase-js'
 import * as dotenv from 'dotenv'
-import { readFileSync, writeFileSync, mkdirSync, existsSync, rmSync } from 'fs'
+import { readFileSync, writeFileSync, mkdirSync, existsSync, rmSync, readdirSync, statSync } from 'fs'
 import { join, dirname, resolve, basename } from 'path'
 import { pathToFileURL } from 'url'
 
 dotenv.config()
 
 const DIST = 'dist'
+// Build de production sur Vercel : les contrôles deviennent bloquants.
+const STRICT = process.env.VERCEL_ENV === 'production' || process.env.PRERENDER_STRICT === '1'
 const SITE = process.env.VITE_SITE_URL || 'https://www.rplb-electricite.fr'
 const SITE_NAME = process.env.VITE_COMPANY_NAME || 'RPLB Électricité'
 const PHONE = process.env.VITE_CONTACT_PHONE || '07 86 17 22 82'
@@ -109,9 +120,10 @@ async function loadDynamicContent() {
   const url = process.env.VITE_SUPABASE_URL
   const key = process.env.VITE_SUPABASE_ANON_KEY
   if (!url || !key) {
-    console.warn(
-      '⚠️  VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY absentes : services et articles non pré-rendus.'
-    )
+    const msg = 'VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY absentes : services et articles non pré-rendus.'
+    // Sans fichier pré-rendu, ces pages répondraient 404 (plus de repli SPA).
+    if (STRICT) throw new Error(msg)
+    console.warn(`⚠️  ${msg}`)
     return { services: [], articles: [] }
   }
   const supabase = createClient(url, key)
@@ -121,6 +133,9 @@ async function loadDynamicContent() {
   ])
   if (svc.error) console.warn('⚠️  Services non récupérés :', svc.error.message)
   if (art.error) console.warn('⚠️  Articles non récupérés :', art.error.message)
+  if (STRICT && (svc.error || art.error || !(svc.data || []).length)) {
+    throw new Error('Supabase : services ou articles non récupérés, pré-rendu incomplet.')
+  }
   return { services: svc.data || [], articles: art.data || [] }
 }
 
@@ -129,7 +144,10 @@ async function loadDynamicContent() {
  * Remplace les balises du <head> déjà présentes (elles portent les valeurs de
  * l'accueil) et injecte le contenu dans `#root`.
  */
-function renderPage(template, { path, title, description, keywords, noindex, bodyHtml, jsonLd }) {
+function renderPage(
+  template,
+  { path, title, description, keywords, noindex, bodyHtml, jsonLd, noCanonical }
+) {
   const canonical = path === '/' ? `${SITE}/` : `${SITE}${path}`
   const robots = noindex
     ? 'noindex, follow'
@@ -192,6 +210,14 @@ function renderPage(template, { path, title, description, keywords, noindex, bod
     .map((s) => `<script type="application/ld+json">${escJsonLd(s)}</script>`)
     .join('\n')
 
+  // Page 404 : servie pour n'importe quelle adresse inconnue, elle ne doit
+  // déclarer ni adresse canonique ni og:url.
+  if (noCanonical) {
+    html = html
+      .replace(/\s*<link rel="canonical"[^>]*>/, '')
+      .replace(/\s*<meta property="og:url"[^>]*>/, '')
+  }
+
   const shell = `<div id="root">${bodyHtml || ''}${schemas}</div>`
   if (!/<div id="root"><\/div>/.test(html)) {
     throw new Error('Pré-rendu impossible : <div id="root"></div> introuvable dans dist/index.html.')
@@ -199,20 +225,60 @@ function renderPage(template, { path, title, description, keywords, noindex, bod
   return html.replace(/<div id="root"><\/div>/, shell)
 }
 
+/** Fichier servi par Vercel pour une route : `dist/<route>/index.html`. */
+const routeFile = (path) =>
+  path === '/' ? join(DIST, 'index.html') : join(DIST, path, 'index.html')
+
 function writePage(path, html) {
-  const file = path === '/' ? join(DIST, 'index.html') : join(DIST, path, 'index.html')
+  const file = routeFile(path)
   mkdirSync(dirname(file), { recursive: true })
   writeFileSync(file, html, 'utf8')
 }
 
+/** Image du contenu pré-rendu : même `src` et même `alt` que le composant React. */
+const img = (src, alt, { lazy = false } = {}) =>
+  src
+    ? `<p><img src="${esc(src)}" alt="${esc(alt)}"${lazy ? ' loading="lazy"' : ''} decoding="async" style="max-width:100%;height:auto;border-radius:12px" /></p>`
+    : ''
+
 /** Lien `tel:` construit comme dans les composants React. */
 const telHref = (phone) => `tel:${String(phone).replace(/\s/g, '')}`
+
+// Pied de page pré-rendu, commun à toutes les pages comme Footer.tsx. Renseigné
+// dans main() une fois `pagesContent.ts` chargé.
+let footerHtml = ''
+
+/**
+ * Pied de page : miroir de Footer.tsx (liens services, pages, communes,
+ * coordonnées). C'est lui qui relie /about et /urgence depuis toutes les pages.
+ */
+const buildFooter = (f) => {
+  const list = (items) => `<ul>${items.map((i) => `<li>${i}</li>`).join('')}</ul>`
+  const address = BUSINESS_ADDRESS || f.defaultAddress
+  return `
+<footer>
+<p><strong>${esc(SITE_NAME)}</strong> — ${esc(f.description)}</p>
+<h2>${esc(f.servicesHeading)}</h2>
+${list([...f.serviceLinks, ...f.extraLinks].map((l) => `<a href="${esc(l.path)}">${esc(l.label)}</a>`))}
+<h2>${esc(f.zoneHeading)}</h2>
+${list(f.cityLinks.map((c) => `<a href="/electricien/${esc(c.slug)}">Électricien ${esc(c.name)}</a>`))}
+<h2>${esc(f.contactHeading)}</h2>
+${list([
+  `${esc(f.phoneNames.contact)} : <a href="${telHref(PHONE)}">${esc(PHONE)}</a>`,
+  `${esc(f.phoneNames.urgence)} : <a href="${telHref(URGENCE_PHONE)}">${esc(URGENCE_PHONE)}</a>`,
+  `<a href="mailto:${esc(f.email)}">${esc(f.email)}</a>`,
+  esc(address),
+])}
+<p><a href="/mentions-legales">${esc(f.legalLink)}</a></p>
+</footer>`
+}
 
 /** Enveloppe de mise en page du contenu pré-rendu (visible avant le montage React). */
 const shellLayout = (inner) => `
 <div style="font-family:Archivo,system-ui,-apple-system,sans-serif;color:#0A1B2E;max-width:960px;margin:0 auto;padding:2rem 1.25rem;line-height:1.6">
 ${inner}
 <p style="margin-top:2rem"><a href="/contact">Demander un devis gratuit</a> &middot; <a href="tel:+33786172282">${esc(PHONE)}</a></p>
+${footerHtml}
 </div>`
 
 /** Schéma de l'établissement, identique à celui du composant SEO (#organization). */
@@ -307,7 +373,6 @@ function buildRichBodies({ content, servicesSorted, articlesSorted }) {
     contactCta,
     servicesPage,
     aboutPage,
-    footerContent,
   } = content
 
   const ul = (items) => (items.length ? `<ul>${items.map((i) => `<li>${i}</li>`).join('')}</ul>` : '')
@@ -317,6 +382,7 @@ function buildRichBodies({ content, servicesSorted, articlesSorted }) {
     list
       .map(
         (s) =>
+          img(s.image, s.title, { lazy: true }) +
           `<h3><a href="/services/${esc(s.slug)}">${esc(s.title)}</a></h3>` +
           `<p>${esc(s.short_description)}</p>` +
           `<p>${esc(s.price_info || 'Devis gratuit')}</p>`
@@ -331,27 +397,6 @@ function buildRichBodies({ content, servicesSorted, articlesSorted }) {
 <p>${esc(contactCta.text)}</p>
 <p><a href="${telHref(URGENCE_PHONE)}">${esc(URGENCE_PHONE)}</a> &middot; <a href="/contact">${esc(contactCta.ctaQuote)}</a></p>
 <p>${esc(contactCta.footnote)}</p>`
-
-  const footerBlock = () => {
-    const f = footerContent
-    const address = BUSINESS_ADDRESS || f.defaultAddress
-    return `
-<footer>
-<p><strong>${esc(SITE_NAME)}</strong> — ${esc(f.description)}</p>
-<h2>${esc(f.servicesHeading)}</h2>
-${ul([...f.serviceLinks, ...f.extraLinks].map((l) => `<a href="${esc(l.path)}">${esc(l.label)}</a>`))}
-<h2>${esc(f.zoneHeading)}</h2>
-${ul(f.cityLinks.map((c) => `<a href="/electricien/${esc(c.slug)}">Électricien ${esc(c.name)}</a>`))}
-<h2>${esc(f.contactHeading)}</h2>
-${ul([
-  `${esc(f.phoneNames.contact)} : <a href="${telHref(PHONE)}">${esc(PHONE)}</a>`,
-  `${esc(f.phoneNames.urgence)} : <a href="${telHref(URGENCE_PHONE)}">${esc(URGENCE_PHONE)}</a>`,
-  `<a href="mailto:${esc(f.email)}">${esc(f.email)}</a>`,
-  esc(address),
-])}
-<p><a href="/mentions-legales">${esc(f.legalLink)}</a></p>
-</footer>`
-  }
 
   // GoogleReviewsCarousel : la note moyenne (5.0 affiché « 5 ») et tous les avis
   // du carrousel, qui défilent un par un à l'écran.
@@ -390,6 +435,7 @@ ${latest
 <p>${esc(homeHero.subtitle)}</p>
 <p><a href="${telHref(URGENCE_PHONE)}">${esc(URGENCE_PHONE)}</a> &middot; <a href="/contact">${esc(homeHero.ctaQuote)}</a></p>
 ${ul([`<strong>${esc(homeHero.rating)}</strong> ${esc(homeHero.ratingSuffix)}`, ...homeHero.proofs.map(esc)])}
+${img(homeHero.photoUrl, homeHero.photoAlt)}
 <p>${esc(homeHero.photoName)}, ${esc(homeHero.photoRole)}</p>
 ${trustBlock()}
 <p>${esc(homeServices.eyebrow)}</p>
@@ -408,15 +454,13 @@ ${ul(interventionCities.map((c) => `<a href="/electricien/${esc(c.slug)}">${esc(
 <p>${esc(homeBrands.heading)}</p>
 ${ul(homeBrands.brands.map(esc))}
 ${homeArticlesHtml()}
-${contactBlock()}
-${footerBlock()}`)
+${contactBlock()}`)
 
   const services = shellLayout(`
 <h1>${esc(servicesPage.h1)}</h1>
 <p>${esc(servicesPage.intro)}</p>
 ${serviceCards(servicesSorted)}
-${contactBlock()}
-${footerBlock()}`)
+${contactBlock()}`)
 
   const a = aboutPage
   const about = shellLayout(`
@@ -433,8 +477,7 @@ ${trustBlock()}
 <h2>${esc(a.zoneHeading)}</h2>
 <p>${esc(a.zoneText)}</p>
 ${ul(a.zoneCities.map(esc))}
-${contactBlock()}
-${footerBlock()}`)
+${contactBlock()}`)
 
   return { '/': home, '/services': services, '/about': about }
 }
@@ -449,6 +492,10 @@ async function main() {
   const { LOCAL_CITIES, shouldIndexCity } = await loadDataModule('src/data/localCities.ts')
   const { miseAuxNormes, MISE_AUX_NORMES_PATH } = await loadDataModule('src/data/miseAuxNormes.ts')
   const content = await loadDataModule('src/data/pagesContent.ts')
+  const { getServiceContent, serviceDetailLabels, servicePriceLabel } = await loadDataModule(
+    'src/data/servicesContent.ts'
+  )
+  footerHtml = buildFooter(content.footerContent)
   const cities = Object.values(LOCAL_CITIES)
   const indexedCities = cities.filter(shouldIndexCity).sort((a, b) => b.priority - a.priority)
 
@@ -751,9 +798,39 @@ ${faqHtml}${servicesBlock(`Nos services à ${city.name}`)}
     const fullText =
       s.description || s.short_description || `${s.title || s.slug} par RPLB Électricité, artisan électricien dans l'Oise. Devis gratuit.`
     const description = metaDescription(fullText)
+    // Miroir de ServiceDetail.tsx : sous-titre, tarif, image, description,
+    // sections, liens et FAQ propres au service (src/data/servicesContent.ts).
+    const { sections, faq, links } = getServiceContent(s.slug)
+    const L = serviceDetailLabels
+    const sectionsHtml = sections
+      .map(
+        (sec) =>
+          `<h2>${esc(sec.heading)}</h2>` +
+          (sec.paragraphs || []).map((p) => `<p>${esc(p)}</p>`).join('') +
+          (sec.items ? `<ul>${sec.items.map((i) => `<li>${esc(i)}</li>`).join('')}</ul>` : '')
+      )
+      .join('\n')
+    const features = Array.isArray(s.features) ? s.features : []
+    const featuresHtml = features.length
+      ? `\n<h2>${esc(L.featuresHeading)}</h2>\n<ul>${features.map((f) => `<li>${esc(f)}</li>`).join('')}</ul>`
+      : ''
+    const linksHtml =
+      links && links.length
+        ? `\n<h2>${esc(L.linksHeading)}</h2>\n<ul>${links
+            .map((l) => `<li><a href="${esc(l.path)}">${esc(l.label)}</a></li>`)
+            .join('')}</ul>`
+        : ''
+    const faqHtml = faq.map((f) => `<h3>${esc(f.q)}</h3><p>${esc(f.a)}</p>`).join('')
     const bodyHtml = shellLayout(`
 <h1>${esc(s.title || s.slug)}</h1>
-<p>${esc(fullText)}</p>${servicesBlock('Nos autres services', s.slug)}${zonesBlock("Nos zones d'intervention")}
+<p>${esc(L.subtitle)}</p>${s.price_info ? `\n<p>${esc(servicePriceLabel(s.price_info))}</p>` : ''}
+${img(s.image, s.title || s.slug)}
+<p>${esc(fullText)}</p>
+${sectionsHtml}${featuresHtml}${linksHtml}
+<h2>${esc(L.faqHeading)}</h2>
+${faqHtml}
+<h2>${esc(L.ctaHeading)}</h2>
+<p>${esc(L.ctaText)} : <a href="/contact">${esc(L.ctaButton)}</a></p>${servicesBlock('Nos autres services', s.slug)}${zonesBlock("Nos zones d'intervention")}
 <p><a href="/services">Voir tous nos services</a></p>`)
     writePage(
       `/services/${s.slug}`,
@@ -781,6 +858,15 @@ ${faqHtml}${servicesBlock(`Nos services à ${city.name}`)}
             url: `${SITE}/services/${s.slug}`,
             areaServed: { '@type': 'State', name: 'Oise' },
           },
+          {
+            '@context': 'https://schema.org',
+            '@type': 'FAQPage',
+            mainEntity: faq.map((f) => ({
+              '@type': 'Question',
+              name: f.q,
+              acceptedAnswer: { '@type': 'Answer', text: f.a },
+            })),
+          },
         ],
       })
     )
@@ -797,6 +883,7 @@ ${faqHtml}${servicesBlock(`Nos services à ${city.name}`)}
       a.meta_description || a.excerpt || `${a.title || a.slug} — conseils de RPLB Électricité, électricien dans l'Oise.`
     const bodyHtml = shellLayout(`
 <h1>${esc(a.title || a.slug)}</h1>
+${img(a.featured_image, a.title || a.slug)}
 ${a.content ? renderMarkdown(a.content, { dropLeadingH1: true }) : `<p>${esc(description)}</p>`}${zonesBlock("Nos zones d'intervention")}
 <p><a href="/blog">Retour au blog</a></p>`)
     writePage(
@@ -842,7 +929,81 @@ ${a.content ? renderMarkdown(a.content, { dropLeadingH1: true }) : `<p>${esc(des
     count++
   }
 
-  console.log(`✅ Pré-rendu : ${count} page(s) HTML écrite(s) dans ${DIST}/`)
+  // --- Page 404 --------------------------------------------------------------
+  // Vercel sert `dist/404.html` avec le statut 404 pour toute adresse sans
+  // fichier. Miroir de src/pages/NotFound.tsx (textes dans pagesContent.ts).
+  {
+    const n = content.notFoundPage
+    const bodyHtml = shellLayout(`
+<p>Erreur 404</p>
+<h1>${esc(n.h1)}</h1>
+<p>${esc(n.text)}</p>
+<ul>${n.links.map((l) => `<li><a href="${esc(l.path)}">${esc(l.label)}</a></li>`).join('')}</ul>
+<p>${esc(n.callLead)} <a href="${telHref(PHONE)}">${esc(PHONE)}</a></p>`)
+    writeFileSync(
+      join(DIST, '404.html'),
+      renderPage(template, {
+        path: '/404',
+        title: `${n.title} | ${SITE_NAME}`,
+        description: n.text,
+        noindex: true,
+        noCanonical: true,
+        bodyHtml,
+        jsonLd: [],
+      }),
+      'utf8'
+    )
+  }
+
+  // --- Contrôle : chaque route attendue a son fichier ------------------------
+  // Sans repli SPA, une URL du sitemap ou un lien interne sans fichier pré-rendu
+  // répondrait 404. Bloquant en production, simple avertissement ailleurs (les
+  // builds Preview n'ont pas les variables Supabase).
+  {
+    const redirects = new Set(
+      (JSON.parse(readFileSync('vercel.json', 'utf8')).redirects || []).map((r) => r.source)
+    )
+    const hasFile = (path) => {
+      const clean = path.split('#')[0].split('?')[0].replace(/(.)\/$/, '$1')
+      if (!clean || redirects.has(clean)) return true
+      // Fichier statique (favicon, sitemap…) ou route pré-rendue.
+      const direct = join(DIST, clean)
+      return (existsSync(direct) && statSync(direct).isFile()) || existsSync(routeFile(clean))
+    }
+    const missing = new Map()
+    const note = (path, from) => {
+      if (!hasFile(path)) missing.set(path, from)
+    }
+
+    const sitemapPath = join(DIST, 'sitemap.xml')
+    if (existsSync(sitemapPath)) {
+      for (const m of readFileSync(sitemapPath, 'utf8').matchAll(/<loc>([^<]+)<\/loc>/g)) {
+        note(new URL(m[1]).pathname, 'sitemap.xml')
+      }
+    }
+    const walk = (dir) => {
+      for (const entry of readdirSync(dir, { withFileTypes: true })) {
+        const full = join(dir, entry.name)
+        if (entry.isDirectory()) {
+          if (entry.name !== 'assets') walk(full)
+        } else if (entry.name.endsWith('.html')) {
+          for (const m of readFileSync(full, 'utf8').matchAll(/<a\s[^>]*href="(\/[^"]*)"/g)) {
+            note(m[1], full)
+          }
+        }
+      }
+    }
+    walk(DIST)
+
+    if (missing.size) {
+      const list = [...missing].map(([path, from]) => `  ${path}  (cité par ${from})`).join('\n')
+      const msg = `${missing.size} route(s) sans fichier pré-rendu, donc en 404 :\n${list}`
+      if (STRICT) throw new Error(msg)
+      console.warn(`⚠️  ${msg}`)
+    }
+  }
+
+  console.log(`✅ Pré-rendu : ${count} page(s) HTML + 404.html écrites dans ${DIST}/`)
 }
 
 main().catch((e) => {

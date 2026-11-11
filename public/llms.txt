@@ -45,6 +45,7 @@ Thourotte, Ressons-sur-Matz et les communes environnantes.
 - [Réalisations](https://www.rplb-electricite.fr/realisations) : exemples de chantiers
 - [Urgence](https://www.rplb-electricite.fr/urgence) : dépannage électrique rapide
 - [Contact](https://www.rplb-electricite.fr/contact) : demande de devis gratuit
+- [À propos](https://www.rplb-electricite.fr/about) : l'entreprise, ses valeurs, sa zone d'intervention
 - [Blog](https://www.rplb-electricite.fr/blog) : conseils et actualités sur l'électricité
 
 ## Guides

@@ -23,6 +23,10 @@ export const homeHero = {
   rating: '5,0',
   ratingSuffix: 'sur Google',
   proofs: ['Assurance décennale', 'Devis gratuit sous 48 h'],
+  // Photo de l'équipe : affichée par Hero.tsx et Home.tsx, et reprise en <img>
+  // dans le HTML pré-rendu de l'accueil.
+  photoUrl:
+    'https://hgcpddzpqzfxrvfipsii.supabase.co/storage/v1/object/public/rplb-media/services/pagnier-bozo-photo-web.jpg',
   photoAlt: "Romain Pagnier et Ludovic Bozo, électriciens RPLB dans l'Oise",
   photoName: 'Romain & Ludovic',
   photoRole: 'Fondateurs — RPLB Électricité',
@@ -272,8 +276,10 @@ export const footerContent = {
     { path: '/services/climatisation', label: 'Climatisation' },
   ],
   extraLinks: [
+    { path: '/urgence', label: 'Dépannage urgent' },
     { path: '/realisations', label: 'Nos réalisations' },
     { path: '/blog', label: 'Blog & conseils' },
+    { path: '/about', label: 'À propos' },
   ],
   zoneHeading: "Zone d'intervention",
   // Maillage interne vers les pages locales (SEO)
@@ -293,4 +299,23 @@ export const footerContent = {
   defaultAddress: 'Longueil-Sainte-Marie, 60126',
   phoneNames: { contact: 'Romain Pagnier', urgence: 'Ludovic Bozo' },
   legalLink: 'Mentions légales',
+}
+
+// --- Page introuvable (404) --------------------------------------------------
+
+// Lu par src/pages/NotFound.tsx et par scripts/prerender.mjs, qui écrit
+// `dist/404.html` : Vercel sert ce fichier avec le statut 404 pour toute
+// adresse qui ne correspond à aucune page.
+export const notFoundPage = {
+  title: 'Page introuvable',
+  h1: 'Page introuvable',
+  text: "La page que vous cherchez n'existe pas ou a été déplacée. Voici où trouver ce dont vous avez besoin :",
+  links: [
+    { path: '/', label: "Retour à l'accueil" },
+    { path: '/services', label: "Nos services d'électricité" },
+    { path: '/urgence', label: 'Dépannage électrique urgent' },
+    { path: '/contact', label: 'Contact et devis gratuit' },
+    { path: '/blog', label: "Conseils d'électricien (blog)" },
+  ],
+  callLead: 'Une panne ou une question ? Appelez-nous :',
 }
