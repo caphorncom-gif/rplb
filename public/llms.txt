@@ -15,7 +15,7 @@
 ## Zone d'intervention
 Longueil-Sainte-Marie et tout le secteur de l'Oise dans un rayon d'environ 15 km :
 Compiègne, Margny-lès-Compiègne, Venette, Jaux, Le Meux, Verberie,
-Pont-Sainte-Maxence, Crépy-en-Valois, Senlis, Noyon, Creil, Montataire, Nogent-sur-Oise,
+Pont-Sainte-Maxence, Crépy-en-Valois, Senlis, Chantilly, Noyon, Creil, Montataire, Nogent-sur-Oise,
 Thourotte, Ressons-sur-Matz et les communes environnantes.
 
 ## Services
@@ -38,6 +38,7 @@ Thourotte, Ressons-sur-Matz et les communes environnantes.
 - [Montataire](https://www.rplb-electricite.fr/electricien/montataire)
 - [Pont-Sainte-Maxence](https://www.rplb-electricite.fr/electricien/pont-sainte-maxence)
 - [Thourotte](https://www.rplb-electricite.fr/electricien/thourotte)
+- [Chantilly](https://www.rplb-electricite.fr/electricien/chantilly)
 
 ## Pages principales
 - [Accueil](https://www.rplb-electricite.fr/) : présentation de l'entreprise et des services

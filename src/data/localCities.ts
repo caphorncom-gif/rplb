@@ -40,6 +40,7 @@ export const INDEXED_CITY_SLUGS: ReadonlySet<string> = new Set([
   'montataire',
   'pont-sainte-maxence',
   'thourotte',
+  'chantilly', // ~70 recherches/mois, page validée par Kévin le 16/11/2026
 ])
 
 /** True si la page commune doit être indexée par les moteurs. */
@@ -484,6 +485,19 @@ export const LOCAL_CITIES: Record<string, CityData> = {
     lng: 2.6333,
     description: 'Commune de l\'Oise, Barbery fait partie de notre zone d\'intervention.',
     priority: 0.7
+  },
+  'chantilly': {
+    slug: 'chantilly',
+    name: 'Chantilly',
+    postalCode: '60500',
+    department: 'Oise',
+    lat: 49.1947,
+    lng: 2.4714,
+    description: 'Ville du cheval et du patrimoine, Chantilly s\'est construite autour de son château, des Grandes Écuries et de l\'hippodrome, en lisière de la forêt de Chantilly. On y trouve des maisons de ville et des immeubles anciens dans le centre, autour de la rue du Connétable, des villas et maisons de maître dans les quartiers résidentiels, des résidences plus récentes, ainsi que des commerces et des locaux liés au monde des courses. Dans une maison ancienne, l\'installation d\'origine mérite souvent un diagnostic : mise en sécurité, mise aux normes NF C 15-100, remplacement du tableau électrique et des circuits vétustes, contrôle de la prise de terre et des protections différentielles. Dans un logement récent ou rénové, RPLB Électricité prend en charge l\'installation électrique complète, l\'éclairage intérieur et extérieur, la domotique, l\'alarme et la vidéosurveillance, ou encore la pose d\'une borne de recharge pour véhicule électrique. Une panne, une coupure, un disjoncteur qui saute : nous assurons aussi le dépannage. Entre Senlis et Creil, Chantilly (60500) fait partie des communes où nos électriciens, certifiés Qualifelec et RGE, interviennent du lundi au vendredi, pour les particuliers comme pour les professionnels. Le devis est gratuit et détaillé.',
+    priority: 0.8,
+    meta_title: 'Électricien à Chantilly (60500) | Rénovation & Dépannage | RPLB',
+    meta_description:
+      'RPLB, électricien à Chantilly (60500). Mise aux normes de maisons anciennes, tableau électrique, installation, dépannage. Devis gratuit ☎ 07 86 17 22 82',
   },
   
   // Noyon et environs

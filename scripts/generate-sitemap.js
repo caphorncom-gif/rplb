@@ -54,7 +54,8 @@ const INDEXED_CITY_SLUGS = new Set([
   'crepy-en-valois',
   'montataire',
   'pont-sainte-maxence',
-  'thourotte'
+  'thourotte',
+  'chantilly'
 ])
 
 // Landing pages locales pour le SEO - Toutes les communes dans un rayon de 15 km
@@ -72,6 +73,7 @@ const allLocalLandingPages = [
   { city: 'creil', priority: '0.8', changefreq: 'monthly' },
   { city: 'nogent-sur-oise', priority: '0.8', changefreq: 'monthly' },
   { city: 'thourotte', priority: '0.8', changefreq: 'monthly' },
+  { city: 'chantilly', priority: '0.8', changefreq: 'monthly' },
   
   // Communes secondaires (priorité moyenne)
   { city: 'margny-les-compiegne', priority: '0.8', changefreq: 'monthly' },
