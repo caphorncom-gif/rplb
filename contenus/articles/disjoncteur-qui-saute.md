@@ -3,8 +3,8 @@ slug: disjoncteur-qui-saute-causes-solutions
 category: Conseils
 tags: [disjoncteur, dépannage, tableau électrique, sécurité, interrupteur différentiel]
 seo_title: Disjoncteur qui saute : causes et solutions | RPLB Oise
-seo_description: Votre disjoncteur saute sans arrêt ? Les 5 causes fréquentes, la méthode pour trouver l'appareil en cause et quand appeler un électricien dans l'Oise.
-excerpt: Disjoncteur général, différentiel ou divisionnaire : comment savoir lequel a sauté, trouver la cause (surcharge, appareil défectueux, humidité) et savoir quand faire appel à un électricien dans l'Oise.
+seo_description: Disjoncteur, différentiel 30 mA ou Linky qui saute sans raison ? Causes, méthode pour trouver l'appareil en cause et quand appeler un électricien dans l'Oise.
+excerpt: Disjoncteur général, différentiel 30 mA, divisionnaire, Linky ou fusibles : comment savoir lequel a sauté, trouver la cause (surcharge, appareil défectueux, humidité) et savoir quand faire appel à un électricien dans l'Oise.
 ---
 # Disjoncteur qui saute : les causes et quand appeler un électricien
 
@@ -12,9 +12,11 @@ Le courant coupe d'un coup, la maison est dans le noir, et en ouvrant le tableau
 
 Voici la méthode que nous appliquons chez RPLB Électricité lors de nos dépannages dans l'Oise, en commençant par ce que vous pouvez vérifier vous-même, en toute sécurité.
 
-## Quel disjoncteur a sauté ? Trois cas différents
+## Quel disjoncteur a sauté ? Les cas possibles
 
-Dans un tableau électrique, trois types d'appareils peuvent couper le courant. Les reconnaître vous dit déjà beaucoup sur l'origine de la panne.
+Dans un tableau électrique, trois types d'appareils peuvent couper le courant, auxquels s'ajoutent le compteur Linky et, dans les logements anciens, les fusibles. Les reconnaître vous dit déjà beaucoup sur l'origine de la panne.
+
+Repère utile : sur la manette, **I** veut dire enclenché (le courant passe) et **O** veut dire coupé. Une manette en position basse, sur O, a sauté.
 
 ### Le disjoncteur général (ou disjoncteur d'abonné)
 
@@ -27,6 +29,14 @@ Il se repère au petit bouton « test » sur sa face avant et à la mention « 3
 ### Le disjoncteur divisionnaire
 
 Ce sont les petits modules étroits, un par circuit (prises du salon, éclairage, four, lave-linge…). S'il saute, **un seul circuit** est coupé. Il protège les câbles contre la surchauffe en cas de surcharge ou de court-circuit.
+
+### Le compteur Linky qui « disjoncte »
+
+Toute la maison est coupée, mais la manette du disjoncteur général est restée en haut ? C'est souvent le compteur Linky qui a coupé, parce que la consommation a dépassé la puissance de votre abonnement. Pour rétablir le courant, baissez la manette du disjoncteur général, puis remontez-la. Si la coupure revient à chaque pic de consommation, voyez la cause n° 1 plus bas.
+
+### Les fusibles : « les plombs ont sauté »
+
+Dans les tableaux anciens, chaque circuit est protégé par un fusible (les « plombs ») au lieu d'un disjoncteur. Quand un circuit est en surcharge, le fil du fusible fond et le circuit est coupé. Coupez le disjoncteur général, puis remplacez le fusible par un modèle **de même calibre** (indiqué dessus). Ne le remplacez jamais par un fil de cuivre ou un fusible plus gros : c'est une cause classique d'incendie. Un tableau à fusibles n'a souvent pas d'interrupteur différentiel 30 mA, et ne protège donc pas les personnes. C'est une bonne raison de le faire remplacer.
 
 ## Les 5 causes les plus fréquentes
 
@@ -49,6 +59,17 @@ Une prise extérieure mal protégée, une boîte de dérivation dans une cave hu
 ### 5. Un défaut dans l'installation elle-même
 
 Un câble abîmé (clou planté dans un mur, rongeur dans les combles), une connexion desserrée qui chauffe, un court-circuit dans une boîte de dérivation, ou simplement un tableau ancien dont les protections sont usées. Dans les maisons anciennes, fréquentes dans le Compiégnois et le Valois, c'est une cause que nous rencontrons souvent.
+
+## Le différentiel 30 mA saute « sans raison » : ce qui se passe vraiment
+
+C'est la panne la plus déroutante : l'interrupteur différentiel 30 mA saute de temps en temps, sans orage, sans appareil neuf, sans logique apparente. Il y a presque toujours une explication.
+
+- **Les petites fuites s'additionnent.** Chaque appareil laisse fuir un tout petit courant vers la terre, ce qui est normal. Mais quand trop de circuits dépendent du même différentiel, ces fuites s'additionnent et finissent par atteindre le seuil de déclenchement. Il suffit alors qu'un appareil de plus démarre pour que tout coupe. La norme NF C 15-100 limite d'ailleurs le nombre de circuits par interrupteur différentiel.
+- **Un appareil qui se dégrade lentement.** La résistance d'un chauffe-eau, d'un lave-linge ou d'un four peut fuir un peu plus chaque mois avant de lâcher. Les coupures deviennent de plus en plus fréquentes.
+- **Le mauvais type de différentiel.** Les plaques de cuisson, le lave-linge, une pompe à chaleur ou une borne de recharge produisent des courants que les différentiels de type AC (les plus anciens) gèrent mal. La norme impose un différentiel de type A sur les circuits des plaques et du lave-linge. Si votre pompe à chaleur ou votre chauffe-eau fait disjoncter le différentiel, c'est une piste à vérifier.
+- **L'humidité qui va et vient** : voir la cause n° 4 plus haut.
+
+Dans ces cas-là, chercher l'appareil un par un ne suffit pas toujours, car c'est la somme des fuites qui pose problème. Un électricien mesure l'isolement de chaque circuit et rééquilibre le tableau si besoin.
 
 ## La méthode pour trouver l'appareil en cause
 
@@ -95,6 +116,22 @@ La nuit, ce sont souvent des appareils qui démarrent seuls : chauffe-eau en heu
 ### Pourquoi le disjoncteur saute-t-il quand il pleut ?
 
 Parce que l'eau s'infiltre quelque part dans l'installation : prise ou éclairage extérieur, boîte de dérivation, câble enterré abîmé. L'interrupteur différentiel détecte la fuite de courant et coupe. Il faut localiser et réparer le point d'entrée de l'eau.
+
+### Mon disjoncteur ne se réarme pas, que faire ?
+
+Sur beaucoup de modèles, il faut d'abord **baisser complètement** la manette avant de pouvoir la remonter. Si elle retombe aussitôt, c'est que le défaut est toujours là : débranchez tout et suivez la méthode ci-dessus. Si elle retombe même sans rien de branché, le problème est dans l'installation : appelez un électricien.
+
+### Pourquoi le disjoncteur général saute mais pas le différentiel ?
+
+Le disjoncteur général coupe en cas de dépassement de la puissance souscrite, et il protège aussi contre les grosses fuites de courant. S'il saute seul, pensez d'abord à une consommation trop forte (chauffage, four et lave-linge en même temps). Si cela arrive alors que peu d'appareils tournent, il peut s'agir d'un défaut en amont du tableau, à faire vérifier.
+
+### Mon disjoncteur chauffe, est-ce grave ?
+
+Oui, il faut s'en occuper vite. Un disjoncteur chaud au toucher signale le plus souvent une connexion desserrée ou un circuit trop chargé pour son calibre. C'est un risque d'incendie : réduisez l'usage du circuit et faites intervenir un électricien.
+
+### L'électricité se coupe sans que rien ne disjoncte : pourquoi ?
+
+Si toutes les manettes sont restées en haut, vérifiez d'abord chez vos voisins : c'est peut-être une coupure du réseau (voir plus haut). Sinon, pensez au compteur Linky, qui peut couper sans faire bouger le disjoncteur général. Si le courant coupe sur une seule pièce sans rien déclencher, une connexion desserrée est possible, et elle doit être réparée.
 
 ### Un disjoncteur peut-il être usé ?
 
