@@ -878,7 +878,7 @@ ${faqHtml}
 
   for (const a of articles) {
     if (!a.slug) continue
-    const title = `${a.title || a.slug} | ${SITE_NAME}`
+    const title = a.seo_title || `${a.title || a.slug} | ${SITE_NAME}`
     const description =
       a.seo_description || a.excerpt || `${a.title || a.slug} — conseils de RPLB Électricité, électricien dans l'Oise.`
     const bodyHtml = shellLayout(`
