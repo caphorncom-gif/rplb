@@ -13,6 +13,7 @@ interface Article {
   slug: string
   title: string
   excerpt: string | null
+  seo_title: string | null
   seo_description: string | null
   content: string
   featured_image: string | null
@@ -121,7 +122,8 @@ export const ArticleDetail = () => {
   return (
     <>
       <SEO
-        title={article.title}
+        title={article.seo_title || article.title}
+        documentTitleVerbatim={Boolean(article.seo_title)}
         description={article.seo_description || article.excerpt || article.content.substring(0, 160)}
         keywords={article.tags?.join(', ')}
         type="article"
