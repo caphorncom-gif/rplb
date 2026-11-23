@@ -880,7 +880,7 @@ ${faqHtml}
     if (!a.slug) continue
     const title = `${a.title || a.slug} | ${SITE_NAME}`
     const description =
-      a.meta_description || a.excerpt || `${a.title || a.slug} — conseils de RPLB Électricité, électricien dans l'Oise.`
+      a.seo_description || a.excerpt || `${a.title || a.slug} — conseils de RPLB Électricité, électricien dans l'Oise.`
     const bodyHtml = shellLayout(`
 <h1>${esc(a.title || a.slug)}</h1>
 ${img(a.featured_image, a.title || a.slug)}
